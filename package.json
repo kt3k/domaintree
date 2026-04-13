@@ -1,7 +1,29 @@
 {
   "name": "domaintree",
   "version": "0.1.0",
+  "description": "Viewer of domain models",
+  "keywords": [
+    "ddd"
+  ],
+  "homepage": "https://github.com/kt3k/domaintree#readme",
+  "bugs": {
+    "url": "https://github.com/kt3k/domaintree/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kt3k/domaintree.git"
+  },
+  "license": "MIT",
+  "author": "Yoshiya Hinosawa",
   "type": "module",
+  "main": "main.js",
+  "directories": {
+    "example": "examples",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "npx deno-test"
+  },
   "dependencies": {
     "yaml": "^2"
   },
