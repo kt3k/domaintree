@@ -1,5 +1,6 @@
 import { parse } from "./src/parser.ts";
 import { render } from "./src/renderer.ts";
+import { inputSchema } from "./src/schema.ts";
 
 const VERSION = "0.1.0";
 
@@ -15,72 +16,13 @@ Arguments:
 Options:
   -o, --output <path>   Output file path (default: stdout)
   --title <title>       Override the title from YAML
-  --types               Print the expected YAML input schema as TypeScript types
+  --types               Print the expected YAML input schema as JSON Schema
   -v, --version         Show version
   -h, --help            Show help`);
 }
 
 function printTypes(): void {
-  const schema = {
-    $schema: "https://json-schema.org/draft/2020-12/schema",
-    title: "DomainTreeInput",
-    description: "Input schema for domaintree YAML files",
-    type: "object",
-    required: ["title", "models"],
-    properties: {
-      title: {
-        type: "string",
-        description: "Title of the infographic",
-      },
-      models: {
-        type: "array",
-        description: "List of domain models",
-        items: {
-          type: "object",
-          required: ["name", "type"],
-          properties: {
-            name: {
-              type: "string",
-              description: "Model name",
-            },
-            type: {
-              type: "string",
-              enum: ["entity", "value_object"],
-              description: "Model type",
-            },
-            description: {
-              type: "string",
-              description:
-                "Description (used as aggregate description for root entities)",
-            },
-            properties: {
-              type: "array",
-              description: "List of properties",
-              items: {
-                type: "object",
-                required: ["name", "type"],
-                properties: {
-                  name: {
-                    type: "string",
-                    description: "Property name",
-                  },
-                  type: {
-                    type: "string",
-                    description:
-                      "Type name. If it matches another model's name, a parent-child relationship is inferred",
-                  },
-                },
-                additionalProperties: false,
-              },
-            },
-          },
-          additionalProperties: false,
-        },
-      },
-    },
-    additionalProperties: false,
-  };
-  console.log(JSON.stringify(schema, null, 2));
+  console.log(JSON.stringify(inputSchema, null, 2));
 }
 
 function main(): void {
