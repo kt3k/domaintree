@@ -1,4 +1,4 @@
-import { assert, assertFalse, assertStringIncludes } from "@std/assert";
+import { assertFalse, assertStringIncludes } from "@std/assert";
 import { render } from "../src/renderer.ts";
 import type { DomainDocument } from "../src/types.ts";
 
