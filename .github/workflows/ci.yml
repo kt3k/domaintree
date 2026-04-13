@@ -10,10 +10,13 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: denoland/setup-deno@v2
+      - uses: actions/setup-node@v4
         with:
-          deno-version: v2.x
+          node-version: lts/*
       - run: deno fmt --check
       - run: deno lint
       - run: deno test --allow-read --allow-env
+      - run: npm install
+      - run: npx deno-test
