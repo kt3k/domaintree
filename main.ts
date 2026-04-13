@@ -15,8 +15,37 @@ Arguments:
 Options:
   -o, --output <path>   Output file path (default: stdout)
   --title <title>       Override the title from YAML
+  --types               Print the expected YAML input schema as TypeScript types
   -v, --version         Show version
   -h, --help            Show help`);
+}
+
+function printTypes(): void {
+  console.log(`/** Top-level structure of the input YAML */
+interface DomainTreeInput {
+  /** Title of the infographic */
+  title: string;
+  /** List of domain models */
+  models: Model[];
+}
+
+interface Model {
+  /** Model name */
+  name: string;
+  /** Model type */
+  type: "entity" | "value_object";
+  /** Description (used as aggregate description for root entities) */
+  description?: string;
+  /** List of properties */
+  properties?: Property[];
+}
+
+interface Property {
+  /** Property name */
+  name: string;
+  /** Type name (if it matches another model's name, a parent-child relationship is inferred) */
+  type: string;
+}`);
 }
 
 function main(): void {
@@ -29,6 +58,11 @@ function main(): void {
 
   if (args.includes("-v") || args.includes("--version")) {
     console.log(`domaintree ${VERSION}`);
+    Deno.exit(0);
+  }
+
+  if (args.includes("--types")) {
+    printTypes();
     Deno.exit(0);
   }
 
