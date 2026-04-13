@@ -1,11 +1,14 @@
 # domaintree Specification
 
-A CLI tool that takes domain model definitions (YAML) and renders them as a single self-contained HTML file.
+A CLI tool that takes domain model definitions (YAML) and renders them as a
+single self-contained HTML file.
 
 ## 1. Goals
 
-- Visualize DDD domain models (Aggregate, Entity, Value Object, Enum) in a **file-tree-style layout**
-- Output is a **single HTML file** (inline CSS, no external dependencies) that can be viewed simply by opening it in a browser
+- Visualize DDD domain models (Aggregate, Entity, Value Object, Enum) in a
+  **file-tree-style layout**
+- Output is a **single HTML file** (inline CSS, no external dependencies) that
+  can be viewed simply by opening it in a browser
 - Serve as an infographic that provides a bird's-eye view of the entire domain
 
 See [mock.html](./mock.html) for a mock of the expected output.
@@ -103,36 +106,36 @@ aggregates:
 
 #### Top Level
 
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `title` | string | Yes | Title of the infographic |
-| `aggregates` | Aggregate[] | Yes | List of aggregates |
+| Field        | Type        | Required | Description              |
+| ------------ | ----------- | -------- | ------------------------ |
+| `title`      | string      | Yes      | Title of the infographic |
+| `aggregates` | Aggregate[] | Yes      | List of aggregates       |
 
 #### Aggregate
 
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `name` | string | Yes | Aggregate name |
-| `description` | string | No | Description |
-| `root` | DomainModel | Yes | Aggregate root (Entity) |
+| Field         | Type        | Required | Description             |
+| ------------- | ----------- | -------- | ----------------------- |
+| `name`        | string      | Yes      | Aggregate name          |
+| `description` | string      | No       | Description             |
+| `root`        | DomainModel | Yes      | Aggregate root (Entity) |
 
 #### DomainModel
 
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `name` | string | Yes | Model name |
-| `type` | `"entity"` \| `"value_object"` \| `"enum"` | Yes | Model type |
-| `description` | string | No | Description |
-| `properties` | Property[] | No | List of properties (except `enum`) |
-| `values` | string[] | No | Enum values (`enum` only) |
-| `children` | DomainModel[] | No | Child elements |
+| Field         | Type                                       | Required | Description                        |
+| ------------- | ------------------------------------------ | -------- | ---------------------------------- |
+| `name`        | string                                     | Yes      | Model name                         |
+| `type`        | `"entity"` \| `"value_object"` \| `"enum"` | Yes      | Model type                         |
+| `description` | string                                     | No       | Description                        |
+| `properties`  | Property[]                                 | No       | List of properties (except `enum`) |
+| `values`      | string[]                                   | No       | Enum values (`enum` only)          |
+| `children`    | DomainModel[]                              | No       | Child elements                     |
 
 #### Property
 
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `name` | string | Yes | Property name |
-| `type` | string | Yes | Type name |
+| Field  | Type   | Required | Description   |
+| ------ | ------ | -------- | ------------- |
+| `name` | string | Yes      | Property name |
+| `type` | string | Yes      | Type name     |
 
 ## 3. Output
 
@@ -194,18 +197,19 @@ EC Site Domain Model
 
 - Each Aggregate becomes a tree root
 - The Aggregate Root (Entity) is displayed as the first child of the tree
-- Models specified in `children` are expanded as child nodes of that model in the tree
+- Models specified in `children` are expanded as child nodes of that model in
+  the tree
 - Tree connectors use `├──`, `└──`, `│` just like a file tree (rendered via CSS)
 - Each node is displayed as a card-style block containing a list of properties
 
 #### Visual Distinction
 
-| Model Type | Color Theme | Icon |
-|---|---|---|
-| Aggregate | Dark border + background color | 📦 |
-| Entity | Blue | 🔷 |
-| Value Object | Purple/Green | 💎 |
-| Enum | Orange/Yellow | 📋 |
+| Model Type   | Color Theme                    | Icon |
+| ------------ | ------------------------------ | ---- |
+| Aggregate    | Dark border + background color | 📦   |
+| Entity       | Blue                           | 🔷   |
+| Value Object | Purple/Green                   | 💎   |
+| Enum         | Orange/Yellow                  | 📋   |
 
 ## 4. CLI Interface
 
@@ -215,18 +219,18 @@ domaintree <input.yaml> [-o <output.html>]
 
 ### 4.1 Arguments
 
-| Argument | Description |
-|---|---|
+| Argument       | Description                            |
+| -------------- | -------------------------------------- |
 | `<input.yaml>` | Path to the input YAML file (required) |
 
 ### 4.2 Options
 
-| Option | Default | Description |
-|---|---|---|
-| `-o, --output <path>` | stdout | Output file path. Outputs to stdout when omitted |
-| `--title <title>` | `title` from YAML | Override the title |
-| `-v, --version` | - | Show version |
-| `-h, --help` | - | Show help |
+| Option                | Default           | Description                                      |
+| --------------------- | ----------------- | ------------------------------------------------ |
+| `-o, --output <path>` | stdout            | Output file path. Outputs to stdout when omitted |
+| `--title <title>`     | `title` from YAML | Override the title                               |
+| `-v, --version`       | -                 | Show version                                     |
+| `-h, --help`          | -                 | Show help                                        |
 
 ### 4.3 Examples
 
@@ -243,15 +247,15 @@ deno run -A main.ts domains.yaml -o output.html
 
 ## 5. Tech Stack
 
-| Item | Choice |
-|---|---|
-| Language | TypeScript |
-| Development Runtime | Deno |
-| Execution Runtime | Node / Deno / Bun (cross-runtime) |
-| Package Registry | npm |
-| Testing | deno-test@1.0.1 (npm package) |
-| YAML Parsing | yaml (npm package) |
-| Build | None (distribute TypeScript as-is, or transpile with dnt) |
+| Item                | Choice                                                    |
+| ------------------- | --------------------------------------------------------- |
+| Language            | TypeScript                                                |
+| Development Runtime | Deno                                                      |
+| Execution Runtime   | Node / Deno / Bun (cross-runtime)                         |
+| Package Registry    | npm                                                       |
+| Testing             | deno-test@1.0.1 (npm package)                             |
+| YAML Parsing        | yaml (npm package)                                        |
+| Build               | None (distribute TypeScript as-is, or transpile with dnt) |
 
 ## 6. Project Structure
 
@@ -279,5 +283,6 @@ domaintree/
 - Test runner: `deno-test@1.0.1` (npm)
 - Test execution commands defined in `deno.json` `tasks`
 - Parser: Verify that YAML input is correctly converted to the internal model
-- Renderer: Verify that the HTML output from the internal model contains the expected elements
+- Renderer: Verify that the HTML output from the internal model contains the
+  expected elements
 - E2E: Feed a sample YAML and verify that the output HTML is valid

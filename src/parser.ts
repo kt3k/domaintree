@@ -1,5 +1,10 @@
 import { parse as parseYaml } from "yaml";
-import type { Aggregate, DomainDocument, DomainModel, Property } from "./types.ts";
+import type {
+  Aggregate,
+  DomainDocument,
+  DomainModel,
+  Property,
+} from "./types.ts";
 
 export function parse(yamlString: string): DomainDocument {
   const raw = parseYaml(yamlString);
@@ -14,7 +19,9 @@ export function parse(yamlString: string): DomainDocument {
   }
 
   if (!Array.isArray(doc.aggregates) || doc.aggregates.length === 0) {
-    throw new Error("Missing required field: aggregates (must be a non-empty array)");
+    throw new Error(
+      "Missing required field: aggregates (must be a non-empty array)",
+    );
   }
 
   const aggregates = doc.aggregates.map(parseAggregate);
@@ -34,14 +41,18 @@ function parseAggregate(raw: unknown, index: number): Aggregate {
   }
 
   if (!obj.root || typeof obj.root !== "object") {
-    throw new Error(`aggregates[${index}] (${obj.name}): missing required field "root"`);
+    throw new Error(
+      `aggregates[${index}] (${obj.name}): missing required field "root"`,
+    );
   }
 
   const root = parseDomainModel(obj.root, `aggregates[${index}].root`);
 
   return {
     name: obj.name,
-    description: typeof obj.description === "string" ? obj.description : undefined,
+    description: typeof obj.description === "string"
+      ? obj.description
+      : undefined,
     root,
   };
 }
@@ -59,7 +70,9 @@ function parseDomainModel(raw: unknown, path: string): DomainModel {
 
   const validTypes = ["entity", "value_object", "enum"];
   if (typeof obj.type !== "string" || !validTypes.includes(obj.type)) {
-    throw new Error(`${path} (${obj.name}): "type" must be one of: ${validTypes.join(", ")}`);
+    throw new Error(
+      `${path} (${obj.name}): "type" must be one of: ${validTypes.join(", ")}`,
+    );
   }
 
   const model: DomainModel = {

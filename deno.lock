@@ -1,15 +1,15 @@
 {
   "version": "5",
   "specifiers": {
-    "npm:deno-test@1.0.1": "1.0.1",
+    "npm:deno-test@^1.0.1": "1.0.2",
     "npm:yaml@2": "2.8.3"
   },
   "npm": {
     "@deno/shim-deno-test@0.5.0": {
       "integrity": "sha512-4nMhecpGlPi0cSzT67L+Tm+GOJqvuk8gqHBziqcUQOarnuIax1z96/gJHCSIz2Z0zhxE6Rzwb3IZXPtFh51j+w=="
     },
-    "deno-test@1.0.1": {
-      "integrity": "sha512-H7aPPnYxg5u/FMt1wfDpmCpwDBFmg9uzmiMmgZOOZWOKJHEaKgZk+OtVdDxyYspXKxFe6MsN5IlUNMNipFJRGg==",
+    "deno-test@1.0.2": {
+      "integrity": "sha512-3QryELyivoU+dGrnOml/TPxF78ods7+voKHmCzaPDfykd+QLwrbPk+fSxEGIkVMZ1+tNYtPGj+F1FMWYAaG9cA==",
       "dependencies": [
         "@deno/shim-deno-test"
       ],
@@ -21,9 +21,11 @@
     }
   },
   "workspace": {
-    "dependencies": [
-      "npm:deno-test@1.0.1",
-      "npm:yaml@2"
-    ]
+    "packageJson": {
+      "dependencies": [
+        "npm:deno-test@^1.0.1",
+        "npm:yaml@2"
+      ]
+    }
   }
 }
