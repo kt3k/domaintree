@@ -17,6 +17,6 @@ jobs:
           node-version: lts/*
       - run: deno fmt --check
       - run: deno lint
-      - run: deno test --allow-read --allow-env
+      - run: deno test -A
       - run: npm install
       - run: npx deno-test
