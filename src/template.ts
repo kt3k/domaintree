@@ -74,7 +74,7 @@ const CSS = `  :root {
     border-radius: 8px;
     font-size: 18px;
     font-weight: 700;
-    margin-bottom: 0;
+    margin-bottom: 16px;
   }
 
   .aggregate-header .icon {
@@ -98,10 +98,15 @@ const CSS = `  :root {
     padding-left: 20px;
   }
 
-  .aggregate > .tree {
+  .aggregate > .card {
+    margin-bottom: 0;
+  }
+
+  .aggregate > .root-tree {
     padding-top: 0;
     padding-bottom: 8px;
     margin-top: 0;
+    margin-left: 20px;
   }
 
   .tree-node {

@@ -37,14 +37,16 @@ function renderAggregate(group: DisplayGroup): string {
   }
   html += `  </div>\n`;
 
-  html += `  <ul class="tree">\n`;
-  // Render root as first child node (without expanding its children here)
-  html += renderTreeNode(root, 2, false);
-  // Render root's children as sibling nodes
-  for (const child of root.children) {
-    html += renderTreeNode(child, 2);
+  // Root card displayed directly (not inside tree lines)
+  html += renderCard(root.model, 1);
+
+  if (root.children.length > 0) {
+    html += `  <ul class="tree root-tree">\n`;
+    for (const child of root.children) {
+      html += renderTreeNode(child, 2);
+    }
+    html += `  </ul>\n`;
   }
-  html += `  </ul>\n`;
   html += `</div>\n\n`;
   return html;
 }
