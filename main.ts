@@ -1,113 +1,88 @@
+import { defineCommand, runMain } from "citty";
 import { parse } from "./src/parser.ts";
 import { render } from "./src/renderer.ts";
 import { inputSchema } from "./src/schema.ts";
 
 const VERSION = "0.1.0";
 
-function printHelp(): void {
-  console.log(`domaintree - Visualize DDD domain models as HTML
-
-Usage:
-  domaintree <input.yaml> [options]
-
-Arguments:
-  <input.yaml>          Path to the input YAML file
-
-Options:
-  -o, --output <path>   Output file path (default: stdout)
-  --title <title>       Override the title from YAML
-  --types               Print the expected YAML input schema as JSON Schema
-  -v, --version         Show version
-  -h, --help            Show help`);
-}
-
-function printTypes(): void {
-  console.log(JSON.stringify(inputSchema, null, 2));
-}
-
-function main(): void {
-  const args = [...Deno.args];
-
-  if (args.includes("-h") || args.includes("--help")) {
-    printHelp();
-    Deno.exit(0);
-  }
-
-  if (args.includes("-v") || args.includes("--version")) {
-    console.log(`domaintree ${VERSION}`);
-    Deno.exit(0);
-  }
-
-  if (args.includes("--types")) {
-    printTypes();
-    Deno.exit(0);
-  }
-
-  let outputPath: string | undefined;
-  let titleOverride: string | undefined;
-  let inputPath: string | undefined;
-
-  for (let i = 0; i < args.length; i++) {
-    const arg = args[i];
-    if (arg === "-o" || arg === "--output") {
-      outputPath = args[++i];
-      if (!outputPath) {
-        console.error("Error: --output requires a path argument");
-        Deno.exit(1);
-      }
-    } else if (arg === "--title") {
-      titleOverride = args[++i];
-      if (!titleOverride) {
-        console.error("Error: --title requires a value");
-        Deno.exit(1);
-      }
-    } else if (!arg.startsWith("-")) {
-      inputPath = arg;
-    } else {
-      console.error(`Error: Unknown option: ${arg}`);
-      Deno.exit(1);
-    }
-  }
-
-  if (!inputPath) {
-    console.error("Error: No input file specified\n");
-    printHelp();
-    Deno.exit(1);
-  }
-
-  let yamlContent: string;
-  try {
-    yamlContent = Deno.readTextFileSync(inputPath);
-  } catch {
-    console.error(`Error: Cannot read file: ${inputPath}`);
-    Deno.exit(1);
-  }
-
-  let doc;
-  try {
-    doc = parse(yamlContent);
-  } catch (e) {
-    console.error(`Error: ${(e as Error).message}`);
-    Deno.exit(1);
-  }
-
-  if (titleOverride) {
-    doc.title = titleOverride;
-  }
-
-  const html = render(doc);
-
-  if (outputPath) {
+const buildCommand = defineCommand({
+  meta: {
+    name: "build",
+    description: "Build HTML from a YAML domain model file",
+  },
+  args: {
+    input: {
+      type: "positional",
+      description: "Path to the input YAML file",
+      required: true,
+    },
+    output: {
+      type: "string",
+      description: "Output file path (default: stdout)",
+      alias: ["o"],
+    },
+    title: {
+      type: "string",
+      description: "Override the title from YAML",
+    },
+  },
+  run({ args }) {
+    let yamlContent: string;
     try {
-      Deno.writeTextFileSync(outputPath, html);
-      console.error(`Written to ${outputPath}`);
+      yamlContent = Deno.readTextFileSync(args.input);
     } catch {
-      console.error(`Error: Cannot write to: ${outputPath}`);
+      console.error(`Error: Cannot read file: ${args.input}`);
       Deno.exit(1);
     }
-  } else {
-    console.log(html);
-  }
-}
 
-main();
+    let doc;
+    try {
+      doc = parse(yamlContent);
+    } catch (e) {
+      console.error(`Error: ${(e as Error).message}`);
+      Deno.exit(1);
+    }
+
+    if (args.title) {
+      doc.title = args.title;
+    }
+
+    const html = render(doc);
+
+    if (args.output) {
+      try {
+        Deno.writeTextFileSync(args.output, html);
+        console.error(`Written to ${args.output}`);
+      } catch {
+        console.error(`Error: Cannot write to: ${args.output}`);
+        Deno.exit(1);
+      }
+    } else {
+      console.log(html);
+    }
+  },
+});
+
+const typesCommand = defineCommand({
+  meta: {
+    name: "types",
+    description: "Print the expected YAML input schema as JSON Schema",
+  },
+  run() {
+    console.log(JSON.stringify(inputSchema, null, 2));
+  },
+});
+
+const main = defineCommand({
+  meta: {
+    name: "domaintree",
+    version: VERSION,
+    description: "Visualize DDD domain models as HTML",
+  },
+  subCommands: {
+    build: buildCommand,
+    types: typesCommand,
+  },
+});
+
+runMain(main);

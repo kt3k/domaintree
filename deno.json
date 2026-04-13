@@ -4,8 +4,8 @@
   "exports": "./mod.ts",
   "nodeModulesDir": "auto",
   "tasks": {
-    "test": "deno test --allow-read --allow-env",
+    "test": "deno test --allow-read --allow-env --allow-run",
     "run": "deno run --allow-read --allow-write --allow-env main.ts",
-    "example": "deno -A main.ts examples/ec-site.yaml > example.html && open example.html"
+    "example": "deno -A main.ts build examples/ec-site.yaml > example.html && open example.html"
   }
 }
