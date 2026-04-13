@@ -1,5 +1,6 @@
 import { parse } from "./src/parser.ts";
 import { render } from "./src/renderer.ts";
+import { inputSchema } from "./src/schema.ts";
 
 const VERSION = "0.1.0";
 
@@ -15,37 +16,13 @@ Arguments:
 Options:
   -o, --output <path>   Output file path (default: stdout)
   --title <title>       Override the title from YAML
-  --types               Print the expected YAML input schema as TypeScript types
+  --types               Print the expected YAML input schema as JSON Schema
   -v, --version         Show version
   -h, --help            Show help`);
 }
 
 function printTypes(): void {
-  console.log(`/** Top-level structure of the input YAML */
-interface DomainTreeInput {
-  /** Title of the infographic */
-  title: string;
-  /** List of domain models */
-  models: Model[];
-}
-
-interface Model {
-  /** Model name */
-  name: string;
-  /** Model type */
-  type: "entity" | "value_object";
-  /** Description (used as aggregate description for root entities) */
-  description?: string;
-  /** List of properties */
-  properties?: Property[];
-}
-
-interface Property {
-  /** Property name */
-  name: string;
-  /** Type name (if it matches another model's name, a parent-child relationship is inferred) */
-  type: string;
-}`);
+  console.log(JSON.stringify(inputSchema, null, 2));
 }
 
 function main(): void {
