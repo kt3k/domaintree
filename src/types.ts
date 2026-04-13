@@ -3,22 +3,29 @@ export interface Property {
   type: string;
 }
 
-export interface DomainModel {
+/** Input model as defined in the YAML file */
+export interface Model {
   name: string;
-  type: "entity" | "value_object" | "enum";
+  type: "entity" | "value_object";
   description?: string;
   properties?: Property[];
-  values?: string[];
-  children?: DomainModel[];
 }
 
-export interface Aggregate {
-  name: string;
+/** Internal tree node built from aggregate inference */
+export interface ModelNode {
+  model: Model;
+  children: ModelNode[];
+}
+
+/** A display group: either an aggregate (with children) or a standalone model */
+export interface DisplayGroup {
+  /** "aggregate" if the root has children, "standalone" otherwise */
+  kind: "aggregate" | "standalone";
+  root: ModelNode;
   description?: string;
-  root: DomainModel;
 }
 
 export interface DomainDocument {
   title: string;
-  aggregates: Aggregate[];
+  groups: DisplayGroup[];
 }

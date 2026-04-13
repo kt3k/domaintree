@@ -1,82 +1,69 @@
 title: "EC Site Domain Model"
 
-aggregates:
+models:
   - name: Order
+    type: entity
     description: "Order aggregate"
-    root:
-      name: Order
-      type: entity
-      properties:
-        - name: id
-          type: OrderId
-        - name: status
-          type: OrderStatus
-        - name: orderedAt
-          type: Date
-      children:
-        - name: OrderItem
-          type: entity
-          description: "Order line item"
-          properties:
-            - name: id
-              type: OrderItemId
-            - name: quantity
-              type: number
-            - name: unitPrice
-              type: Money
-          children:
-            - name: Money
-              type: value_object
-              properties:
-                - name: amount
-                  type: number
-                - name: currency
-                  type: string
+    properties:
+      - name: id
+        type: OrderId
+      - name: items
+        type: OrderItem
+      - name: orderedAt
+        type: Date
 
-        - name: OrderStatus
-          type: enum
-          values:
-            - PENDING
-            - CONFIRMED
-            - SHIPPED
-            - DELIVERED
-            - CANCELLED
+  - name: OrderItem
+    type: entity
+    description: "Order line item"
+    properties:
+      - name: id
+        type: OrderItemId
+      - name: quantity
+        type: number
+      - name: unitPrice
+        type: Money
 
-        - name: OrderId
-          type: value_object
-          properties:
-            - name: value
-              type: string
+  - name: Money
+    type: value_object
+    properties:
+      - name: amount
+        type: number
+      - name: currency
+        type: string
+
+  - name: OrderId
+    type: value_object
+    properties:
+      - name: value
+        type: string
 
   - name: Customer
+    type: entity
     description: "Customer aggregate"
-    root:
-      name: Customer
-      type: entity
-      properties:
-        - name: id
-          type: CustomerId
-        - name: name
-          type: PersonName
-        - name: email
-          type: Email
-      children:
-        - name: PersonName
-          type: value_object
-          properties:
-            - name: firstName
-              type: string
-            - name: lastName
-              type: string
+    properties:
+      - name: id
+        type: CustomerId
+      - name: name
+        type: PersonName
+      - name: email
+        type: Email
 
-        - name: Email
-          type: value_object
-          properties:
-            - name: value
-              type: string
+  - name: PersonName
+    type: value_object
+    properties:
+      - name: firstName
+        type: string
+      - name: lastName
+        type: string
 
-        - name: CustomerId
-          type: value_object
-          properties:
-            - name: value
-              type: string
+  - name: Email
+    type: value_object
+    properties:
+      - name: value
+        type: string
+
+  - name: CustomerId
+    type: value_object
+    properties:
+      - name: value
+        type: string

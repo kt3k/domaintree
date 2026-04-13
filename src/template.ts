@@ -11,9 +11,6 @@ const CSS = `  :root {
     --vo-bg: #f0ebf8;
     --vo-border: #9c7cdb;
     --vo-accent: #7c4dff;
-    --enum-bg: #fef7e0;
-    --enum-border: #f0b429;
-    --enum-accent: #d4930a;
     --tree-line: #b0b0b0;
   }
 
@@ -31,9 +28,6 @@ const CSS = `  :root {
       --vo-bg: #2a2040;
       --vo-border: #a88ce0;
       --vo-accent: #c4a6ff;
-      --enum-bg: #2e2a1a;
-      --enum-border: #d4a830;
-      --enum-accent: #f0c040;
       --tree-line: #555568;
     }
   }
@@ -92,6 +86,10 @@ const CSS = `  :root {
     font-size: 14px;
     color: var(--text-sub);
     margin-left: 8px;
+  }
+
+  .standalone {
+    margin-bottom: 24px;
   }
 
   .tree {
@@ -182,24 +180,6 @@ const CSS = `  :root {
     color: var(--text-sub);
   }
 
-  .enum-values {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    padding: 4px 0;
-  }
-
-  .enum-value {
-    font-size: 12px;
-    font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace;
-    padding: 2px 10px;
-    border-radius: 4px;
-    background: var(--enum-bg);
-    border: 1px solid var(--enum-border);
-    color: var(--enum-accent);
-    font-weight: 500;
-  }
-
   .card.entity {
     border-color: var(--entity-border);
   }
@@ -221,18 +201,6 @@ const CSS = `  :root {
   }
   .card.value-object .badge {
     background: var(--vo-accent);
-    color: #fff;
-  }
-
-  .card.enum {
-    border-color: var(--enum-border);
-  }
-  .card.enum .card-header {
-    background: var(--enum-bg);
-    color: var(--enum-accent);
-  }
-  .card.enum .badge {
-    background: var(--enum-accent);
     color: #fff;
   }`;
 

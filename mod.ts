@@ -1,8 +1,9 @@
 export { parse } from "./src/parser.ts";
 export { render } from "./src/renderer.ts";
 export type {
-  Aggregate,
+  DisplayGroup,
   DomainDocument,
-  DomainModel,
+  Model,
+  ModelNode,
   Property,
 } from "./src/types.ts";
