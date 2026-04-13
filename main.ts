@@ -5,10 +5,10 @@ import { inputSchema } from "./src/schema.ts";
 
 const VERSION = "0.1.0";
 
-const renderCommand = defineCommand({
+const buildCommand = defineCommand({
   meta: {
-    name: "render",
-    description: "Render a YAML domain model file as HTML",
+    name: "build",
+    description: "Build HTML from a YAML domain model file",
   },
   args: {
     input: {
@@ -80,7 +80,7 @@ const main = defineCommand({
     description: "Visualize DDD domain models as HTML",
   },
   subCommands: {
-    render: renderCommand,
+    build: buildCommand,
     types: typesCommand,
   },
 });
