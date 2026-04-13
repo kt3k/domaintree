@@ -5,42 +5,48 @@ import type { DomainDocument } from "../src/types.ts";
 function makeDoc(): DomainDocument {
   return {
     title: "Test Domain",
-    aggregates: [
+    groups: [
       {
-        name: "Order",
+        kind: "aggregate",
         description: "Order aggregate",
         root: {
-          name: "Order",
-          type: "entity",
-          properties: [
-            { name: "id", type: "OrderId" },
-            { name: "status", type: "OrderStatus" },
-          ],
+          model: {
+            name: "Order",
+            type: "entity",
+            description: "Order aggregate",
+            properties: [
+              { name: "id", type: "OrderId" },
+              { name: "items", type: "OrderItem" },
+            ],
+          },
           children: [
             {
-              name: "OrderItem",
-              type: "entity",
-              properties: [{ name: "quantity", type: "number" }],
+              model: {
+                name: "OrderItem",
+                type: "entity",
+                properties: [{ name: "quantity", type: "number" }],
+              },
               children: [
                 {
-                  name: "Money",
-                  type: "value_object",
-                  properties: [
-                    { name: "amount", type: "number" },
-                    { name: "currency", type: "string" },
-                  ],
+                  model: {
+                    name: "Money",
+                    type: "value_object",
+                    properties: [
+                      { name: "amount", type: "number" },
+                      { name: "currency", type: "string" },
+                    ],
+                  },
+                  children: [],
                 },
               ],
             },
             {
-              name: "OrderStatus",
-              type: "enum",
-              values: ["PENDING", "CONFIRMED", "SHIPPED"],
-            },
-            {
-              name: "OrderId",
-              type: "value_object",
-              properties: [{ name: "value", type: "string" }],
+              model: {
+                name: "OrderId",
+                type: "value_object",
+                properties: [{ name: "value", type: "string" }],
+              },
+              children: [],
             },
           ],
         },
@@ -99,20 +105,6 @@ Deno.test("render: renders value object card", () => {
   }
 });
 
-Deno.test("render: renders enum card with values", () => {
-  const html = render(makeDoc());
-  if (!html.includes('class="card enum"')) {
-    throw new Error("Missing enum card class");
-  }
-  if (!html.includes("📋")) throw new Error("Missing enum icon");
-  if (!html.includes(">Enum<")) throw new Error("Missing Enum badge");
-  if (!html.includes("PENDING")) throw new Error("Missing enum value PENDING");
-  if (!html.includes("CONFIRMED")) {
-    throw new Error("Missing enum value CONFIRMED");
-  }
-  if (!html.includes("enum-value")) throw new Error("Missing enum-value class");
-});
-
 Deno.test("render: renders properties", () => {
   const html = render(makeDoc());
   if (!html.includes("id:")) throw new Error("Missing property name 'id'");
@@ -125,7 +117,6 @@ Deno.test("render: renders properties", () => {
 
 Deno.test("render: renders nested children as subtree", () => {
   const html = render(makeDoc());
-  // Money is a child of OrderItem, should appear in a nested .tree
   if (!html.includes("Money")) throw new Error("Missing nested child Money");
   if (!html.includes("amount:")) {
     throw new Error("Missing nested property amount");
@@ -139,12 +130,38 @@ Deno.test("render: renders subtitle with stats", () => {
   if (!html.includes("2 Value Objects")) {
     throw new Error("Missing value object count");
   }
-  if (!html.includes("1 Enum")) throw new Error("Missing enum count");
 });
 
 Deno.test("render: includes dark mode CSS", () => {
   const html = render(makeDoc());
   if (!html.includes("prefers-color-scheme: dark")) {
     throw new Error("Missing dark mode media query");
+  }
+});
+
+Deno.test("render: standalone model (no aggregate wrapper)", () => {
+  const doc: DomainDocument = {
+    title: "Test",
+    groups: [
+      {
+        kind: "standalone",
+        root: {
+          model: {
+            name: "Config",
+            type: "value_object",
+            properties: [{ name: "key", type: "string" }],
+          },
+          children: [],
+        },
+      },
+    ],
+  };
+  const html = render(doc);
+  if (!html.includes("Config")) throw new Error("Missing standalone model");
+  if (!html.includes("standalone")) {
+    throw new Error("Missing standalone class");
+  }
+  if (html.includes('class="aggregate-header"')) {
+    throw new Error("Standalone should not have aggregate header");
   }
 });
