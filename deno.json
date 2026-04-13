@@ -1,0 +1,13 @@
+{
+  "name": "@domaintree/domaintree",
+  "version": "0.1.0",
+  "exports": "./mod.ts",
+  "imports": {
+    "yaml": "npm:yaml@2",
+    "deno-test": "npm:deno-test@1.0.1"
+  },
+  "tasks": {
+    "test": "deno test --allow-read --allow-env",
+    "run": "deno run --allow-read --allow-write main.ts"
+  }
+}
