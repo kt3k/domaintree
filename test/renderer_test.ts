@@ -1,4 +1,4 @@
-import "deno-test";
+import { assertFalse, assertStringIncludes } from "@std/assert";
 import { render } from "../src/renderer.ts";
 import type { DomainDocument } from "../src/types.ts";
 
@@ -57,86 +57,64 @@ function makeDoc(): DomainDocument {
 
 Deno.test("render: produces valid HTML structure", () => {
   const html = render(makeDoc());
-  if (!html.includes("<!DOCTYPE html>")) throw new Error("Missing DOCTYPE");
-  if (!html.includes("<html")) throw new Error("Missing html tag");
-  if (!html.includes("</html>")) throw new Error("Missing closing html tag");
-  if (!html.includes("<style>")) throw new Error("Missing style tag");
+  assertStringIncludes(html, "<!DOCTYPE html>");
+  assertStringIncludes(html, "<html");
+  assertStringIncludes(html, "</html>");
+  assertStringIncludes(html, "<style>");
 });
 
 Deno.test("render: includes title", () => {
   const html = render(makeDoc());
-  if (!html.includes("<title>Test Domain</title>")) {
-    throw new Error("Missing title in head");
-  }
-  if (!html.includes("<h1>Test Domain</h1>")) {
-    throw new Error("Missing h1 title");
-  }
+  assertStringIncludes(html, "<title>Test Domain</title>");
+  assertStringIncludes(html, "<h1>Test Domain</h1>");
 });
 
 Deno.test("render: renders aggregate header", () => {
   const html = render(makeDoc());
-  if (!html.includes("📦")) throw new Error("Missing aggregate icon");
-  if (!html.includes("Order")) throw new Error("Missing aggregate name");
-  if (!html.includes("Order aggregate")) {
-    throw new Error("Missing aggregate description");
-  }
-  if (!html.includes("aggregate-header")) {
-    throw new Error("Missing aggregate-header class");
-  }
+  assertStringIncludes(html, "📦");
+  assertStringIncludes(html, "Order");
+  assertStringIncludes(html, "Order aggregate");
+  assertStringIncludes(html, "aggregate-header");
 });
 
 Deno.test("render: renders entity card", () => {
   const html = render(makeDoc());
-  if (!html.includes('class="card entity"')) {
-    throw new Error("Missing entity card class");
-  }
-  if (!html.includes("🔷")) throw new Error("Missing entity icon");
-  if (!html.includes(">Entity<")) throw new Error("Missing Entity badge");
+  assertStringIncludes(html, 'class="card entity"');
+  assertStringIncludes(html, "🔷");
+  assertStringIncludes(html, ">Entity<");
 });
 
 Deno.test("render: renders value object card", () => {
   const html = render(makeDoc());
-  if (!html.includes('class="card value-object"')) {
-    throw new Error("Missing value-object card class");
-  }
-  if (!html.includes("💎")) throw new Error("Missing value object icon");
-  if (!html.includes(">Value Object<")) {
-    throw new Error("Missing Value Object badge");
-  }
+  assertStringIncludes(html, 'class="card value-object"');
+  assertStringIncludes(html, "💎");
+  assertStringIncludes(html, ">Value Object<");
 });
 
 Deno.test("render: renders properties", () => {
   const html = render(makeDoc());
-  if (!html.includes("id:")) throw new Error("Missing property name 'id'");
-  if (!html.includes("OrderId")) {
-    throw new Error("Missing property type 'OrderId'");
-  }
-  if (!html.includes("prop-name")) throw new Error("Missing prop-name class");
-  if (!html.includes("prop-type")) throw new Error("Missing prop-type class");
+  assertStringIncludes(html, "id:");
+  assertStringIncludes(html, "OrderId");
+  assertStringIncludes(html, "prop-name");
+  assertStringIncludes(html, "prop-type");
 });
 
 Deno.test("render: renders nested children as subtree", () => {
   const html = render(makeDoc());
-  if (!html.includes("Money")) throw new Error("Missing nested child Money");
-  if (!html.includes("amount:")) {
-    throw new Error("Missing nested property amount");
-  }
+  assertStringIncludes(html, "Money");
+  assertStringIncludes(html, "amount:");
 });
 
 Deno.test("render: renders subtitle with stats", () => {
   const html = render(makeDoc());
-  if (!html.includes("1 Aggregate")) throw new Error("Missing aggregate count");
-  if (!html.includes("2 Entities")) throw new Error("Missing entity count");
-  if (!html.includes("2 Value Objects")) {
-    throw new Error("Missing value object count");
-  }
+  assertStringIncludes(html, "1 Aggregate");
+  assertStringIncludes(html, "2 Entities");
+  assertStringIncludes(html, "2 Value Objects");
 });
 
 Deno.test("render: includes dark mode CSS", () => {
   const html = render(makeDoc());
-  if (!html.includes("prefers-color-scheme: dark")) {
-    throw new Error("Missing dark mode media query");
-  }
+  assertStringIncludes(html, "prefers-color-scheme: dark");
 });
 
 Deno.test("render: standalone model (no aggregate wrapper)", () => {
@@ -157,11 +135,7 @@ Deno.test("render: standalone model (no aggregate wrapper)", () => {
     ],
   };
   const html = render(doc);
-  if (!html.includes("Config")) throw new Error("Missing standalone model");
-  if (!html.includes("standalone")) {
-    throw new Error("Missing standalone class");
-  }
-  if (html.includes('class="aggregate-header"')) {
-    throw new Error("Standalone should not have aggregate header");
-  }
+  assertStringIncludes(html, "Config");
+  assertStringIncludes(html, "standalone");
+  assertFalse(html.includes('class="aggregate-header"'));
 });
