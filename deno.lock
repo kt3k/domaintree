@@ -1,12 +1,30 @@
 {
   "version": "5",
   "specifiers": {
+    "jsr:@std/assert@*": "1.0.19",
+    "jsr:@std/assert@1": "1.0.19",
+    "jsr:@std/internal@^1.0.12": "1.0.12",
+    "npm:citty@0": "0.2.2",
     "npm:deno-test@^1.0.1": "1.0.2",
     "npm:yaml@2": "2.8.3"
+  },
+  "jsr": {
+    "@std/assert@1.0.19": {
+      "integrity": "eaada96ee120cb980bc47e040f82814d786fe8162ecc53c91d8df60b8755991e",
+      "dependencies": [
+        "jsr:@std/internal"
+      ]
+    },
+    "@std/internal@1.0.12": {
+      "integrity": "972a634fd5bc34b242024402972cd5143eac68d8dffaca5eaa4dba30ce17b027"
+    }
   },
   "npm": {
     "@deno/shim-deno-test@0.5.0": {
       "integrity": "sha512-4nMhecpGlPi0cSzT67L+Tm+GOJqvuk8gqHBziqcUQOarnuIax1z96/gJHCSIz2Z0zhxE6Rzwb3IZXPtFh51j+w=="
+    },
+    "citty@0.2.2": {
+      "integrity": "sha512-+6vJA3L98yv+IdfKGZHBNiGW5KHn22e/JwID0Strsz8h4S/csAu/OuICwxrg44k5MRiZHWIo8XXuJgQTriRP4w=="
     },
     "deno-test@1.0.2": {
       "integrity": "sha512-3QryELyivoU+dGrnOml/TPxF78ods7+voKHmCzaPDfykd+QLwrbPk+fSxEGIkVMZ1+tNYtPGj+F1FMWYAaG9cA==",
@@ -21,8 +39,12 @@
     }
   },
   "workspace": {
+    "dependencies": [
+      "jsr:@std/assert@1"
+    ],
     "packageJson": {
       "dependencies": [
+        "npm:citty@0",
         "npm:deno-test@^1.0.1",
         "npm:yaml@2"
       ]

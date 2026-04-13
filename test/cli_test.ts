@@ -3,10 +3,14 @@ import { execFile } from "node:child_process";
 
 function run(...args: string[]): Promise<{ stdout: string; stderr: string }> {
   return new Promise((resolve, reject) => {
-    execFile("deno", ["run", "-A", "main.ts", ...args], (err, stdout, stderr) => {
-      if (err) reject(err);
-      else resolve({ stdout, stderr });
-    });
+    execFile(
+      "deno",
+      ["run", "-A", "main.ts", ...args],
+      (err, stdout, stderr) => {
+        if (err) reject(err);
+        else resolve({ stdout, stderr });
+      },
+    );
   });
 }
 
@@ -17,7 +21,12 @@ Deno.test("cli: build produces HTML", async () => {
 });
 
 Deno.test("cli: build with --title overrides title", async () => {
-  const { stdout } = await run("build", "examples/ec-site.yaml", "--title", "Custom");
+  const { stdout } = await run(
+    "build",
+    "examples/ec-site.yaml",
+    "--title",
+    "Custom",
+  );
   assertStringIncludes(stdout, "<title>Custom</title>");
 });
 
