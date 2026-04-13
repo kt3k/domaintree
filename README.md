@@ -5,7 +5,8 @@ single self-contained HTML file with a file-tree-style layout.
 
 ## Features
 
-- Visualize DDD domain models (Aggregate, Entity, Value Object, Enum)
+- Visualize DDD domain models (Entity, Value Object)
+- Automatically infer aggregate boundaries from model relationships
 - Single HTML file output (inline CSS, no external dependencies)
 - Dark mode / light mode support (`prefers-color-scheme`)
 - Cross-runtime: works with Deno, Node.js, and Bun
@@ -34,32 +35,43 @@ npx domaintree domains.yaml -o output.html
 
 ## Input Format
 
+Define models in a flat list — the tool automatically infers aggregate
+boundaries from property type references.
+
 ```yaml
 title: "EC Site Domain Model"
 
-aggregates:
+models:
   - name: Order
+    type: entity
     description: "Order aggregate"
-    root:
-      name: Order
-      type: entity
-      properties:
-        - name: id
-          type: OrderId
-        - name: status
-          type: OrderStatus
-      children:
-        - name: OrderStatus
-          type: enum
-          values:
-            - PENDING
-            - CONFIRMED
-            - SHIPPED
-        - name: OrderId
-          type: value_object
-          properties:
-            - name: value
-              type: string
+    properties:
+      - name: id
+        type: OrderId
+      - name: items
+        type: OrderItem
+
+  - name: OrderItem
+    type: entity
+    properties:
+      - name: quantity
+        type: number
+      - name: unitPrice
+        type: Money
+
+  - name: Money
+    type: value_object
+    properties:
+      - name: amount
+        type: number
+      - name: currency
+        type: string
+
+  - name: OrderId
+    type: value_object
+    properties:
+      - name: value
+        type: string
 ```
 
 See [spec.md](./spec.md) for the full schema definition.
