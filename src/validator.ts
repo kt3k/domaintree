@@ -15,12 +15,9 @@ interface SchemaNode {
   description?: string;
 }
 
-export function validate(
-  data: unknown,
-  schema: SchemaNode = inputSchema as SchemaNode,
-): ValidationError[] {
+export function validate(data: unknown): ValidationError[] {
   const errors: ValidationError[] = [];
-  validateNode(data, schema, "", errors);
+  validateNode(data, inputSchema as SchemaNode, "", errors);
   return errors;
 }
 
@@ -87,22 +84,7 @@ function validateNode(
 }
 
 function checkType(data: unknown, type: string): boolean {
-  switch (type) {
-    case "object":
-      return typeof data === "object" && data !== null && !Array.isArray(data);
-    case "array":
-      return Array.isArray(data);
-    case "string":
-      return typeof data === "string";
-    case "number":
-      return typeof data === "number";
-    case "boolean":
-      return typeof data === "boolean";
-    case "null":
-      return data === null;
-    default:
-      return true;
-  }
+  return typeName(data) === type;
 }
 
 function typeName(data: unknown): string {
