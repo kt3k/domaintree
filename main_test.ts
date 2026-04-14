@@ -15,7 +15,7 @@ function run(...args: string[]): Promise<{ stdout: string; stderr: string }> {
 }
 
 Deno.test("cli: build produces HTML", async () => {
-  const { stdout } = await run("build", "examples/ec-site.yaml");
+  const { stdout } = await run("build", "examples/ec-site.json");
   assertStringIncludes(stdout, "<!DOCTYPE html>");
   assertStringIncludes(stdout, "EC Site Domain Model");
 });
@@ -23,7 +23,7 @@ Deno.test("cli: build produces HTML", async () => {
 Deno.test("cli: build with --title overrides title", async () => {
   const { stdout } = await run(
     "build",
-    "examples/ec-site.yaml",
+    "examples/ec-site.json",
     "--title",
     "Custom",
   );

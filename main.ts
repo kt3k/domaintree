@@ -8,12 +8,12 @@ const VERSION = "0.1.0";
 const buildCommand = defineCommand({
   meta: {
     name: "build",
-    description: "Build HTML from a YAML domain model file",
+    description: "Build HTML from a JSON domain model file",
   },
   args: {
     input: {
       type: "positional",
-      description: "Path to the input YAML file",
+      description: "Path to the input JSON file",
       required: true,
     },
     output: {
@@ -23,13 +23,13 @@ const buildCommand = defineCommand({
     },
     title: {
       type: "string",
-      description: "Override the title from YAML",
+      description: "Override the title from JSON",
     },
   },
   run({ args }) {
-    let yamlContent: string;
+    let jsonContent: string;
     try {
-      yamlContent = Deno.readTextFileSync(args.input);
+      jsonContent = Deno.readTextFileSync(args.input);
     } catch {
       console.error(`Error: Cannot read file: ${args.input}`);
       Deno.exit(1);
@@ -37,7 +37,7 @@ const buildCommand = defineCommand({
 
     let doc;
     try {
-      doc = parse(yamlContent);
+      doc = parse(jsonContent);
     } catch (e) {
       console.error(`Error: ${(e as Error).message}`);
       Deno.exit(1);
@@ -66,7 +66,7 @@ const buildCommand = defineCommand({
 const typesCommand = defineCommand({
   meta: {
     name: "types",
-    description: "Print the expected YAML input schema as JSON Schema",
+    description: "Print the expected JSON input schema as JSON Schema",
   },
   run() {
     console.log(JSON.stringify(inputSchema, null, 2));

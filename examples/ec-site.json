@@ -1,0 +1,72 @@
+{
+  "title": "EC Site Domain Model",
+  "models": [
+    {
+      "name": "Order",
+      "type": "entity",
+      "description": "Order aggregate",
+      "properties": [
+        { "name": "id", "type": "OrderId" },
+        { "name": "items", "type": "OrderItem" },
+        { "name": "orderedAt", "type": "Date" }
+      ]
+    },
+    {
+      "name": "OrderItem",
+      "type": "entity",
+      "description": "Order line item",
+      "properties": [
+        { "name": "id", "type": "OrderItemId" },
+        { "name": "quantity", "type": "number" },
+        { "name": "unitPrice", "type": "Money" }
+      ]
+    },
+    {
+      "name": "Money",
+      "type": "value_object",
+      "properties": [
+        { "name": "amount", "type": "number" },
+        { "name": "currency", "type": "string" }
+      ]
+    },
+    {
+      "name": "OrderId",
+      "type": "value_object",
+      "properties": [
+        { "name": "value", "type": "string" }
+      ]
+    },
+    {
+      "name": "Customer",
+      "type": "entity",
+      "description": "Customer aggregate",
+      "properties": [
+        { "name": "id", "type": "CustomerId" },
+        { "name": "name", "type": "PersonName" },
+        { "name": "email", "type": "Email" }
+      ]
+    },
+    {
+      "name": "PersonName",
+      "type": "value_object",
+      "properties": [
+        { "name": "firstName", "type": "string" },
+        { "name": "lastName", "type": "string" }
+      ]
+    },
+    {
+      "name": "Email",
+      "type": "value_object",
+      "properties": [
+        { "name": "value", "type": "string" }
+      ]
+    },
+    {
+      "name": "CustomerId",
+      "type": "value_object",
+      "properties": [
+        { "name": "value", "type": "string" }
+      ]
+    }
+  ]
+}

@@ -1,4 +1,3 @@
-import { parse as parseYaml } from "yaml";
 import type {
   DisplayGroup,
   DomainDocument,
@@ -7,10 +6,15 @@ import type {
   Property,
 } from "./types.ts";
 
-export function parse(yamlString: string): DomainDocument {
-  const raw = parseYaml(yamlString);
+export function parse(jsonString: string): DomainDocument {
+  let raw: unknown;
+  try {
+    raw = JSON.parse(jsonString);
+  } catch (e) {
+    throw new Error(`Invalid JSON: ${(e as Error).message}`);
+  }
   if (!raw || typeof raw !== "object") {
-    throw new Error("Invalid YAML: expected an object at the top level");
+    throw new Error("Invalid JSON: expected an object at the top level");
   }
 
   const doc = raw as Record<string, unknown>;
