@@ -3,6 +3,8 @@
 A CLI tool that takes DDD domain model definitions (YAML) and renders them as a
 single self-contained HTML file with a file-tree-style layout.
 
+![screenshot](docs/screenshot.png)
+
 ## Features
 
 - Visualize DDD domain models (Entity, Value Object)
@@ -33,10 +35,10 @@ dx domaintree types
 
 ### Commands
 
-| Command                   | Description                                      |
-| ------------------------- | ------------------------------------------------ |
-| `build <input.yaml>`      | Build HTML from a YAML domain model file         |
-| `types`                   | Print the expected input schema as JSON Schema   |
+| Command              | Description                                    |
+| -------------------- | ---------------------------------------------- |
+| `build <input.yaml>` | Build HTML from a YAML domain model file       |
+| `types`              | Print the expected input schema as JSON Schema |
 
 ### Options (build)
 
