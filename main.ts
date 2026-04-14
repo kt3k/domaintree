@@ -2,6 +2,7 @@ import { defineCommand, runMain } from "citty";
 import { parse } from "./src/parser.ts";
 import { render } from "./src/renderer.ts";
 import { inputSchema } from "./src/schema.ts";
+import { validate } from "./src/validator.ts";
 
 const VERSION = "0.1.0";
 
@@ -73,6 +74,49 @@ const typesCommand = defineCommand({
   },
 });
 
+const validateCommand = defineCommand({
+  meta: {
+    name: "validate",
+    description: "Validate a JSON input file against the schema",
+  },
+  args: {
+    input: {
+      type: "positional",
+      description: "Path to the input JSON file",
+      required: true,
+    },
+  },
+  run({ args }) {
+    let jsonContent: string;
+    try {
+      jsonContent = Deno.readTextFileSync(args.input);
+    } catch {
+      console.error(`Error: Cannot read file: ${args.input}`);
+      Deno.exit(1);
+    }
+
+    let data: unknown;
+    try {
+      data = JSON.parse(jsonContent);
+    } catch (e) {
+      console.error(`Invalid JSON: ${(e as Error).message}`);
+      Deno.exit(1);
+    }
+
+    const errors = validate(data);
+    if (errors.length === 0) {
+      console.log(`OK: ${args.input}`);
+      return;
+    }
+
+    for (const err of errors) {
+      console.error(`${err.path}: ${err.message}`);
+    }
+    console.error(`\n${errors.length} error(s)`);
+    Deno.exit(1);
+  },
+});
+
 const main = defineCommand({
   meta: {
     name: "domaintree",
@@ -82,6 +126,7 @@ const main = defineCommand({
   subCommands: {
     build: buildCommand,
     types: typesCommand,
+    validate: validateCommand,
   },
 });
 
