@@ -8,10 +8,6 @@
 - **場所**: `src/types.ts:28`, `src/parser.ts:9`
 - **内容**: spec/schema は "Input"/"infographic" と呼ぶが、コードでは "DomainDocument"。
 
-### `Model` という語の一般性
-- **場所**: `src/types.ts:7`, JSON の `models[]`
-- **内容**: 「Model」は一般的すぎる語。DDD 文献では「Domain Object」または個別に Entity/Value Object と呼ぶのが一般的。
-
 ### `Value Object` の綴りが層によって異なる
 - **場所**: JSON (`value_object`), Stats (`valueObjects`), CSS (`value-object`)
 - **内容**: 同一概念に 3 つの綴りが存在。各層の慣習だが要注意。
@@ -59,12 +55,7 @@
 - **使われている表記**: schema の description では両方の役割に言及。フィールド名は (a) しか示さない。
 - **推奨**: フィールドはそのままでよいが、`types.ts` で "type は暗黙の参照キーも兼ねる" と明文化。`Property` 単体では読み取れない。
 
-### 4. "Model" が曖昧
-- **概念**: DDD 一般では「ドメインモデル」= 概念モデル全体。本プロジェクトでは `Model` = Entity または Value Object 1 件。
-- **使われている表記**: コードの `Model` (1 件)、README/spec/CLI 説明 "Visualize DDD domain models" (全体)。
-- **推奨**: 型名を `DomainObject` / `BuildingBlock` に改名、または local な意味を明記。
-
-### 5. `DomainDocument.groups` と spec の語彙のずれ
+### 4. `DomainDocument.groups` と spec の語彙のずれ
 - **概念**: 描画対象となるアグリゲート + Standalone のリスト。
 - **使われている表記**: フィールド `groups`、型 `DisplayGroup`、spec の本文 "Aggregates and standalone models"。
 - **推奨**: `groups` → `displayGroups` への改名 (もしくは `aggregates` + `standalones` への分割) で公開構造が自己説明的になる。
