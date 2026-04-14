@@ -12,7 +12,6 @@ interface SchemaNode {
   items?: SchemaNode;
   enum?: unknown[];
   additionalProperties?: boolean;
-  description?: string;
 }
 
 export function validate(data: unknown): ValidationError[] {
@@ -29,21 +28,20 @@ function validateNode(
 ): void {
   const pathLabel = path || "(root)";
 
-  if (schema.enum) {
-    if (!schema.enum.includes(data)) {
-      const allowed = schema.enum.map((v) => JSON.stringify(v)).join(", ");
-      errors.push({
-        path: pathLabel,
-        message: `must be one of: ${allowed}`,
-      });
-      return;
-    }
-  }
-
-  if (schema.type && !checkType(data, schema.type)) {
+  if (schema.enum && !schema.enum.includes(data)) {
+    const allowed = schema.enum.map((v) => JSON.stringify(v)).join(", ");
     errors.push({
       path: pathLabel,
-      message: `expected ${schema.type}, got ${typeName(data)}`,
+      message: `must be one of: ${allowed}`,
+    });
+    return;
+  }
+
+  const actualType = typeName(data);
+  if (schema.type && actualType !== schema.type) {
+    errors.push({
+      path: pathLabel,
+      message: `expected ${schema.type}, got ${actualType}`,
     });
     return;
   }
@@ -81,10 +79,6 @@ function validateNode(
       validateNode(item, schema.items!, `${path}[${i}]`, errors);
     });
   }
-}
-
-function checkType(data: unknown, type: string): boolean {
-  return typeName(data) === type;
 }
 
 function typeName(data: unknown): string {
