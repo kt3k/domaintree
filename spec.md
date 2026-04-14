@@ -24,7 +24,7 @@ A JSON file with a flat list of models:
   "models": [
     {
       "name": "Order",
-      "type": "entity",
+      "kind": "entity",
       "description": "Order aggregate",
       "properties": [
         { "name": "id", "type": "OrderId" },
@@ -34,7 +34,7 @@ A JSON file with a flat list of models:
     },
     {
       "name": "OrderItem",
-      "type": "entity",
+      "kind": "entity",
       "description": "Order line item",
       "properties": [
         { "name": "id", "type": "OrderItemId" },
@@ -44,7 +44,7 @@ A JSON file with a flat list of models:
     },
     {
       "name": "Money",
-      "type": "value_object",
+      "kind": "value_object",
       "properties": [
         { "name": "amount", "type": "number" },
         { "name": "currency", "type": "string" }
@@ -52,14 +52,14 @@ A JSON file with a flat list of models:
     },
     {
       "name": "OrderId",
-      "type": "value_object",
+      "kind": "value_object",
       "properties": [
         { "name": "value", "type": "string" }
       ]
     },
     {
       "name": "Customer",
-      "type": "entity",
+      "kind": "entity",
       "description": "Customer aggregate",
       "properties": [
         { "name": "id", "type": "CustomerId" },
@@ -69,7 +69,7 @@ A JSON file with a flat list of models:
     },
     {
       "name": "PersonName",
-      "type": "value_object",
+      "kind": "value_object",
       "properties": [
         { "name": "firstName", "type": "string" },
         { "name": "lastName", "type": "string" }
@@ -77,14 +77,14 @@ A JSON file with a flat list of models:
     },
     {
       "name": "Email",
-      "type": "value_object",
+      "kind": "value_object",
       "properties": [
         { "name": "value", "type": "string" }
       ]
     },
     {
       "name": "CustomerId",
-      "type": "value_object",
+      "kind": "value_object",
       "properties": [
         { "name": "value", "type": "string" }
       ]
@@ -107,7 +107,7 @@ A JSON file with a flat list of models:
 | Field         | Type                           | Required | Description        |
 | ------------- | ------------------------------ | -------- | ------------------ |
 | `name`        | string                         | Yes      | Model name         |
-| `type`        | `"entity"` \| `"value_object"` | Yes      | Model type         |
+| `kind`        | `"entity"` \| `"value_object"` | Yes      | Model kind         |
 | `description` | string                         | No       | Description        |
 | `properties`  | Property[]                     | No       | List of properties |
 

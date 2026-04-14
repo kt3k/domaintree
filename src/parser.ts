@@ -49,16 +49,16 @@ function parseModel(raw: unknown, path: string): Model {
     throw new Error(`${path}: missing required field "name"`);
   }
 
-  const validTypes = ["entity", "value_object"];
-  if (typeof obj.type !== "string" || !validTypes.includes(obj.type)) {
+  const validKinds = ["entity", "value_object"];
+  if (typeof obj.kind !== "string" || !validKinds.includes(obj.kind)) {
     throw new Error(
-      `${path} (${obj.name}): "type" must be one of: ${validTypes.join(", ")}`,
+      `${path} (${obj.name}): "kind" must be one of: ${validKinds.join(", ")}`,
     );
   }
 
   const model: Model = {
     name: obj.name,
-    type: obj.type as Model["type"],
+    kind: obj.kind as Model["kind"],
   };
 
   if (typeof obj.description === "string") {

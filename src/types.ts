@@ -6,7 +6,7 @@ export interface Property {
 /** Input model as defined in the JSON file */
 export interface Model {
   name: string;
-  type: "entity" | "value_object";
+  kind: "entity" | "value_object";
   description?: string;
   properties?: Property[];
 }

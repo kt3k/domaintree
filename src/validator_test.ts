@@ -7,7 +7,7 @@ Deno.test("validate: accepts a valid document", () => {
     models: [
       {
         name: "Order",
-        type: "entity",
+        kind: "entity",
         properties: [{ name: "id", type: "string" }],
       },
     ],
@@ -32,17 +32,17 @@ Deno.test("validate: reports wrong top-level type", () => {
 Deno.test("validate: reports invalid enum value", () => {
   const doc = {
     title: "Test",
-    models: [{ name: "Foo", type: "enum" }],
+    models: [{ name: "Foo", kind: "enum" }],
   };
   const errors = validate(doc);
   assertEquals(errors.length, 1);
-  assertEquals(errors[0].path, "models[0].type");
+  assertEquals(errors[0].path, "models[0].kind");
 });
 
 Deno.test("validate: reports unknown property when additionalProperties is false", () => {
   const doc = {
     title: "Test",
-    models: [{ name: "Foo", type: "entity", extra: 1 }],
+    models: [{ name: "Foo", kind: "entity", extra: 1 }],
   };
   const errors = validate(doc);
   assertEquals(errors.length, 1);
@@ -56,7 +56,7 @@ Deno.test("validate: reports nested property errors with full path", () => {
     models: [
       {
         name: "Foo",
-        type: "entity",
+        kind: "entity",
         properties: [{ name: "id" }],
       },
     ],
@@ -70,7 +70,7 @@ Deno.test("validate: reports nested property errors with full path", () => {
 Deno.test("validate: accumulates multiple errors", () => {
   const doc = {
     title: 123,
-    models: [{ name: "Foo", type: "bogus" }],
+    models: [{ name: "Foo", kind: "bogus" }],
   };
   const errors = validate(doc);
   assertEquals(errors.length, 2);

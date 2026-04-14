@@ -12,7 +12,7 @@ function makeDoc(): DomainDocument {
         root: {
           model: {
             name: "Order",
-            type: "entity",
+            kind: "entity",
             description: "Order aggregate",
             properties: [
               { name: "id", type: "OrderId" },
@@ -23,14 +23,14 @@ function makeDoc(): DomainDocument {
             {
               model: {
                 name: "OrderItem",
-                type: "entity",
+                kind: "entity",
                 properties: [{ name: "quantity", type: "number" }],
               },
               children: [
                 {
                   model: {
                     name: "Money",
-                    type: "value_object",
+                    kind: "value_object",
                     properties: [
                       { name: "amount", type: "number" },
                       { name: "currency", type: "string" },
@@ -43,7 +43,7 @@ function makeDoc(): DomainDocument {
             {
               model: {
                 name: "OrderId",
-                type: "value_object",
+                kind: "value_object",
                 properties: [{ name: "value", type: "string" }],
               },
               children: [],
@@ -126,7 +126,7 @@ Deno.test("render: standalone model (no aggregate wrapper)", () => {
         root: {
           model: {
             name: "Config",
-            type: "value_object",
+            kind: "value_object",
             properties: [{ name: "key", type: "string" }],
           },
           children: [],

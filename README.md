@@ -62,7 +62,7 @@ boundaries from property type references.
   "models": [
     {
       "name": "Order",
-      "type": "entity",
+      "kind": "entity",
       "description": "Order aggregate",
       "properties": [
         { "name": "id", "type": "OrderId" },
@@ -71,7 +71,7 @@ boundaries from property type references.
     },
     {
       "name": "OrderItem",
-      "type": "entity",
+      "kind": "entity",
       "properties": [
         { "name": "quantity", "type": "number" },
         { "name": "unitPrice", "type": "Money" }
@@ -79,7 +79,7 @@ boundaries from property type references.
     },
     {
       "name": "Money",
-      "type": "value_object",
+      "kind": "value_object",
       "properties": [
         { "name": "amount", "type": "number" },
         { "name": "currency", "type": "string" }
@@ -87,7 +87,7 @@ boundaries from property type references.
     },
     {
       "name": "OrderId",
-      "type": "value_object",
+      "kind": "value_object",
       "properties": [
         { "name": "value", "type": "string" }
       ]
@@ -95,6 +95,10 @@ boundaries from property type references.
   ]
 }
 ```
+
+Each model has a `kind` (`entity` or `value_object`), while each property has a
+`type` (either a primitive name or another model's name — used to infer
+parent-child relationships).
 
 Run `npx domaintree types` (or `dx domaintree types`) to get the full JSON
 Schema. See [spec.md](./spec.md) for the schema definition.
