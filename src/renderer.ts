@@ -81,9 +81,9 @@ function renderTreeNode(
 
 function renderCard(model: Model, indent: number): string {
   const pad = "  ".repeat(indent);
-  const cssClass = getCssClass(model.type);
-  const icon = getIcon(model.type);
-  const badge = getBadgeLabel(model.type);
+  const cssClass = getCssClass(model.kind);
+  const icon = getIcon(model.kind);
+  const badge = getBadgeLabel(model.kind);
 
   let html = `${pad}<div class="card ${cssClass}">\n`;
   html += `${pad}  <div class="card-header">\n`;
@@ -108,8 +108,8 @@ function renderCard(model: Model, indent: number): string {
   return html;
 }
 
-function getCssClass(type: Model["type"]): string {
-  switch (type) {
+function getCssClass(kind: Model["kind"]): string {
+  switch (kind) {
     case "entity":
       return "entity";
     case "value_object":
@@ -117,8 +117,8 @@ function getCssClass(type: Model["type"]): string {
   }
 }
 
-function getIcon(type: Model["type"]): string {
-  switch (type) {
+function getIcon(kind: Model["kind"]): string {
+  switch (kind) {
     case "entity":
       return "🔷";
     case "value_object":
@@ -126,8 +126,8 @@ function getIcon(type: Model["type"]): string {
   }
 }
 
-function getBadgeLabel(type: Model["type"]): string {
-  switch (type) {
+function getBadgeLabel(kind: Model["kind"]): string {
+  switch (kind) {
     case "entity":
       return "Entity";
     case "value_object":
@@ -153,7 +153,7 @@ function collectStats(doc: DomainDocument): Stats {
 }
 
 function countModels(node: ModelNode, stats: Stats): void {
-  switch (node.model.type) {
+  switch (node.model.kind) {
     case "entity":
       stats.entities++;
       break;

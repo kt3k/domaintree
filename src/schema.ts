@@ -14,16 +14,16 @@ export const inputSchema = {
       description: "List of domain models",
       items: {
         type: "object",
-        required: ["name", "type"],
+        required: ["name", "kind"],
         properties: {
           name: {
             type: "string",
             description: "Model name",
           },
-          type: {
+          kind: {
             type: "string",
             enum: ["entity", "value_object"],
-            description: "Model type",
+            description: "Model kind",
           },
           description: {
             type: "string",

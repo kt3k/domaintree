@@ -7,7 +7,7 @@ Deno.test("parse: converts flat models JSON to DomainDocument", () => {
     models: [
       {
         name: "Order",
-        type: "entity",
+        kind: "entity",
         description: "Order aggregate",
         properties: [
           { name: "id", type: "OrderId" },
@@ -16,12 +16,12 @@ Deno.test("parse: converts flat models JSON to DomainDocument", () => {
       },
       {
         name: "OrderItem",
-        type: "entity",
+        kind: "entity",
         properties: [{ name: "quantity", type: "number" }],
       },
       {
         name: "OrderId",
-        type: "value_object",
+        kind: "value_object",
         properties: [{ name: "value", type: "string" }],
       },
     ],
@@ -48,22 +48,22 @@ Deno.test("parse: infers multiple aggregates", () => {
     models: [
       {
         name: "Order",
-        type: "entity",
+        kind: "entity",
         properties: [{ name: "id", type: "OrderId" }],
       },
       {
         name: "OrderId",
-        type: "value_object",
+        kind: "value_object",
         properties: [{ name: "value", type: "string" }],
       },
       {
         name: "Customer",
-        type: "entity",
+        kind: "entity",
         properties: [{ name: "id", type: "CustomerId" }],
       },
       {
         name: "CustomerId",
-        type: "value_object",
+        kind: "value_object",
         properties: [{ name: "value", type: "string" }],
       },
     ],
@@ -81,7 +81,7 @@ Deno.test("parse: standalone model (no children)", () => {
     models: [
       {
         name: "Config",
-        type: "value_object",
+        kind: "value_object",
         properties: [{ name: "key", type: "string" }],
       },
     ],
@@ -98,17 +98,17 @@ Deno.test("parse: nested children (transitive references)", () => {
     models: [
       {
         name: "Order",
-        type: "entity",
+        kind: "entity",
         properties: [{ name: "item", type: "OrderItem" }],
       },
       {
         name: "OrderItem",
-        type: "entity",
+        kind: "entity",
         properties: [{ name: "price", type: "Money" }],
       },
       {
         name: "Money",
-        type: "value_object",
+        kind: "value_object",
         properties: [{ name: "amount", type: "number" }],
       },
     ],
@@ -125,7 +125,7 @@ Deno.test("parse: nested children (transitive references)", () => {
 
 Deno.test("parse: throws on missing title", () => {
   const json = JSON.stringify({
-    models: [{ name: "Foo", type: "entity" }],
+    models: [{ name: "Foo", kind: "entity" }],
   });
   assertThrows(() => parse(json), Error, "title");
 });
@@ -135,12 +135,12 @@ Deno.test("parse: throws on missing models", () => {
   assertThrows(() => parse(json), Error, "models");
 });
 
-Deno.test("parse: throws on invalid model type", () => {
+Deno.test("parse: throws on invalid model kind", () => {
   const json = JSON.stringify({
     title: "Test",
-    models: [{ name: "Foo", type: "enum" }],
+    models: [{ name: "Foo", kind: "enum" }],
   });
-  assertThrows(() => parse(json), Error, "type");
+  assertThrows(() => parse(json), Error, "kind");
 });
 
 Deno.test("parse: throws on invalid JSON", () => {

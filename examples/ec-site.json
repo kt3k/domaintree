@@ -3,7 +3,7 @@
   "models": [
     {
       "name": "Order",
-      "type": "entity",
+      "kind": "entity",
       "description": "Order aggregate",
       "properties": [
         { "name": "id", "type": "OrderId" },
@@ -13,7 +13,7 @@
     },
     {
       "name": "OrderItem",
-      "type": "entity",
+      "kind": "entity",
       "description": "Order line item",
       "properties": [
         { "name": "id", "type": "OrderItemId" },
@@ -23,7 +23,7 @@
     },
     {
       "name": "Money",
-      "type": "value_object",
+      "kind": "value_object",
       "properties": [
         { "name": "amount", "type": "number" },
         { "name": "currency", "type": "string" }
@@ -31,14 +31,14 @@
     },
     {
       "name": "OrderId",
-      "type": "value_object",
+      "kind": "value_object",
       "properties": [
         { "name": "value", "type": "string" }
       ]
     },
     {
       "name": "Customer",
-      "type": "entity",
+      "kind": "entity",
       "description": "Customer aggregate",
       "properties": [
         { "name": "id", "type": "CustomerId" },
@@ -48,7 +48,7 @@
     },
     {
       "name": "PersonName",
-      "type": "value_object",
+      "kind": "value_object",
       "properties": [
         { "name": "firstName", "type": "string" },
         { "name": "lastName", "type": "string" }
@@ -56,14 +56,14 @@
     },
     {
       "name": "Email",
-      "type": "value_object",
+      "kind": "value_object",
       "properties": [
         { "name": "value", "type": "string" }
       ]
     },
     {
       "name": "CustomerId",
-      "type": "value_object",
+      "kind": "value_object",
       "properties": [
         { "name": "value", "type": "string" }
       ]
