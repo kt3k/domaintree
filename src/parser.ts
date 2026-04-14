@@ -1,8 +1,8 @@
 import type {
   DisplayGroup,
   DomainDocument,
-  Model,
-  ModelNode,
+  DomainObject,
+  DomainObjectNode,
   Property,
 } from "./types.ts";
 
@@ -29,16 +29,16 @@ export function parse(jsonString: string): DomainDocument {
     );
   }
 
-  const models = doc.models.map((m: unknown, i: number) =>
-    parseModel(m, `models[${i}]`)
+  const objects = doc.models.map((m: unknown, i: number) =>
+    parseDomainObject(m, `models[${i}]`)
   );
 
-  const groups = inferGroups(models);
+  const groups = inferGroups(objects);
 
   return { title: doc.title, groups };
 }
 
-function parseModel(raw: unknown, path: string): Model {
+function parseDomainObject(raw: unknown, path: string): DomainObject {
   if (!raw || typeof raw !== "object") {
     throw new Error(`${path}: expected an object`);
   }
@@ -56,22 +56,22 @@ function parseModel(raw: unknown, path: string): Model {
     );
   }
 
-  const model: Model = {
+  const domainObject: DomainObject = {
     name: obj.name,
-    kind: obj.kind as Model["kind"],
+    kind: obj.kind as DomainObject["kind"],
   };
 
   if (typeof obj.description === "string") {
-    model.description = obj.description;
+    domainObject.description = obj.description;
   }
 
   if (Array.isArray(obj.properties)) {
-    model.properties = obj.properties.map((p: unknown, i: number) =>
+    domainObject.properties = obj.properties.map((p: unknown, i: number) =>
       parseProperty(p, `${path}.properties[${i}]`)
     );
   }
 
-  return model;
+  return domainObject;
 }
 
 function parseProperty(raw: unknown, path: string): Property {
@@ -93,35 +93,35 @@ function parseProperty(raw: unknown, path: string): Property {
 }
 
 /**
- * Infer aggregate boundaries from flat model list.
+ * Infer aggregate boundaries from flat domain object list.
  *
- * 1. Build a reference graph: property types that match model names.
- * 2. Find roots: models not referenced by any other model.
+ * 1. Build a reference graph: property types that match domain object names.
+ * 2. Find roots: domain objects not referenced by any other.
  * 3. Roots with children → aggregate, roots without → standalone.
  */
-function inferGroups(models: Model[]): DisplayGroup[] {
-  const modelMap = new Map<string, Model>();
-  for (const model of models) {
-    modelMap.set(model.name, model);
+function inferGroups(objects: DomainObject[]): DisplayGroup[] {
+  const objectMap = new Map<string, DomainObject>();
+  for (const obj of objects) {
+    objectMap.set(obj.name, obj);
   }
 
-  // Track which models are referenced by others
+  // Track which domain objects are referenced by others
   const referenced = new Set<string>();
-  for (const model of models) {
-    if (model.properties) {
-      for (const prop of model.properties) {
-        if (modelMap.has(prop.type)) {
+  for (const obj of objects) {
+    if (obj.properties) {
+      for (const prop of obj.properties) {
+        if (objectMap.has(prop.type)) {
           referenced.add(prop.type);
         }
       }
     }
   }
 
-  // Root models: not referenced by any other model
-  const roots = models.filter((m) => !referenced.has(m.name));
+  // Root domain objects: not referenced by any other
+  const roots = objects.filter((o) => !referenced.has(o.name));
 
   return roots.map((root) => {
-    const node = buildTree(root, modelMap, new Set());
+    const node = buildTree(root, objectMap, new Set());
     const hasChildren = node.children.length > 0;
     return {
       kind: hasChildren ? "aggregate" : "standalone",
@@ -132,21 +132,21 @@ function inferGroups(models: Model[]): DisplayGroup[] {
 }
 
 function buildTree(
-  model: Model,
-  modelMap: Map<string, Model>,
+  object: DomainObject,
+  objectMap: Map<string, DomainObject>,
   visited: Set<string>,
-): ModelNode {
-  visited.add(model.name);
-  const children: ModelNode[] = [];
+): DomainObjectNode {
+  visited.add(object.name);
+  const children: DomainObjectNode[] = [];
 
-  if (model.properties) {
-    for (const prop of model.properties) {
-      const child = modelMap.get(prop.type);
+  if (object.properties) {
+    for (const prop of object.properties) {
+      const child = objectMap.get(prop.type);
       if (child && !visited.has(child.name)) {
-        children.push(buildTree(child, modelMap, visited));
+        children.push(buildTree(child, objectMap, visited));
       }
     }
   }
 
-  return { model, children };
+  return { object, children };
 }

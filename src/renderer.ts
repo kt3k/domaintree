@@ -1,8 +1,8 @@
 import type {
   DisplayGroup,
   DomainDocument,
-  Model,
-  ModelNode,
+  DomainObject,
+  DomainObjectNode,
 } from "./types.ts";
 import { escapeHtml, htmlFooter, htmlHeader } from "./template.ts";
 
@@ -31,14 +31,14 @@ function renderAggregate(group: DisplayGroup): string {
   let html = `<div class="aggregate">\n`;
   html += `  <div class="aggregate-header">\n`;
   html += `    <span class="icon">📦</span>\n`;
-  html += `    <span>${escapeHtml(root.model.name)}</span>\n`;
+  html += `    <span>${escapeHtml(root.object.name)}</span>\n`;
   if (group.description) {
     html += `    <span class="desc">${escapeHtml(group.description)}</span>\n`;
   }
   html += `  </div>\n`;
 
   // Root card displayed directly (not inside tree lines)
-  html += renderCard(root.model, 1);
+  html += renderCard(root.object, 1);
 
   if (root.children.length > 0) {
     html += `  <ul class="tree root-tree">\n`;
@@ -53,19 +53,19 @@ function renderAggregate(group: DisplayGroup): string {
 
 function renderStandalone(group: DisplayGroup): string {
   let html = `<div class="standalone">\n`;
-  html += renderCard(group.root.model, 1);
+  html += renderCard(group.root.object, 1);
   html += `</div>\n\n`;
   return html;
 }
 
 function renderTreeNode(
-  node: ModelNode,
+  node: DomainObjectNode,
   indent: number,
   expandChildren = true,
 ): string {
   const pad = "  ".repeat(indent);
   let html = `${pad}<li class="tree-node">\n`;
-  html += renderCard(node.model, indent + 1);
+  html += renderCard(node.object, indent + 1);
 
   if (expandChildren && node.children.length > 0) {
     html += `${pad}  <ul class="tree">\n`;
@@ -79,22 +79,22 @@ function renderTreeNode(
   return html;
 }
 
-function renderCard(model: Model, indent: number): string {
+function renderCard(object: DomainObject, indent: number): string {
   const pad = "  ".repeat(indent);
-  const cssClass = getCssClass(model.kind);
-  const icon = getIcon(model.kind);
-  const badge = getBadgeLabel(model.kind);
+  const cssClass = getCssClass(object.kind);
+  const icon = getIcon(object.kind);
+  const badge = getBadgeLabel(object.kind);
 
   let html = `${pad}<div class="card ${cssClass}">\n`;
   html += `${pad}  <div class="card-header">\n`;
   html += `${pad}    <span>${icon}</span>\n`;
-  html += `${pad}    <span>${escapeHtml(model.name)}</span>\n`;
+  html += `${pad}    <span>${escapeHtml(object.name)}</span>\n`;
   html += `${pad}    <span class="badge">${badge}</span>\n`;
   html += `${pad}  </div>\n`;
 
   html += `${pad}  <div class="card-body">\n`;
-  if (model.properties) {
-    for (const prop of model.properties) {
+  if (object.properties) {
+    for (const prop of object.properties) {
       html += `${pad}    <div class="prop"><span class="prop-name">${
         escapeHtml(prop.name)
       }:</span> <span class="prop-type">${
@@ -108,7 +108,7 @@ function renderCard(model: Model, indent: number): string {
   return html;
 }
 
-function getCssClass(kind: Model["kind"]): string {
+function getCssClass(kind: DomainObject["kind"]): string {
   switch (kind) {
     case "entity":
       return "entity";
@@ -117,7 +117,7 @@ function getCssClass(kind: Model["kind"]): string {
   }
 }
 
-function getIcon(kind: Model["kind"]): string {
+function getIcon(kind: DomainObject["kind"]): string {
   switch (kind) {
     case "entity":
       return "🔷";
@@ -126,7 +126,7 @@ function getIcon(kind: Model["kind"]): string {
   }
 }
 
-function getBadgeLabel(kind: Model["kind"]): string {
+function getBadgeLabel(kind: DomainObject["kind"]): string {
   switch (kind) {
     case "entity":
       return "Entity";
@@ -147,13 +147,13 @@ function collectStats(doc: DomainDocument): Stats {
     if (group.kind === "aggregate") {
       stats.aggregates++;
     }
-    countModels(group.root, stats);
+    countObjects(group.root, stats);
   }
   return stats;
 }
 
-function countModels(node: ModelNode, stats: Stats): void {
-  switch (node.model.kind) {
+function countObjects(node: DomainObjectNode, stats: Stats): void {
+  switch (node.object.kind) {
     case "entity":
       stats.entities++;
       break;
@@ -162,7 +162,7 @@ function countModels(node: ModelNode, stats: Stats): void {
       break;
   }
   for (const child of node.children) {
-    countModels(child, stats);
+    countObjects(child, stats);
   }
 }
 

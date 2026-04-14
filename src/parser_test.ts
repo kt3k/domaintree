@@ -34,12 +34,12 @@ Deno.test("parse: converts flat models JSON to DomainDocument", () => {
 
   const group = doc.groups[0];
   assertEquals(group.kind, "aggregate");
-  assertEquals(group.root.model.name, "Order");
+  assertEquals(group.root.object.name, "Order");
   assertEquals(group.description, "Order aggregate");
   assertEquals(group.root.children.length, 2);
   // Children follow property order: id (OrderId) then items (OrderItem)
-  assertEquals(group.root.children[0].model.name, "OrderId");
-  assertEquals(group.root.children[1].model.name, "OrderItem");
+  assertEquals(group.root.children[0].object.name, "OrderId");
+  assertEquals(group.root.children[1].object.name, "OrderItem");
 });
 
 Deno.test("parse: infers multiple aggregates", () => {
@@ -71,8 +71,8 @@ Deno.test("parse: infers multiple aggregates", () => {
 
   const doc = parse(json);
   assertEquals(doc.groups.length, 2);
-  assertEquals(doc.groups[0].root.model.name, "Order");
-  assertEquals(doc.groups[1].root.model.name, "Customer");
+  assertEquals(doc.groups[0].root.object.name, "Order");
+  assertEquals(doc.groups[1].root.object.name, "Customer");
 });
 
 Deno.test("parse: standalone model (no children)", () => {
@@ -120,7 +120,7 @@ Deno.test("parse: nested children (transitive references)", () => {
   assertEquals(root.children.length, 1);
   const orderItem = root.children[0];
   assertEquals(orderItem.children.length, 1);
-  assertEquals(orderItem.children[0].model.name, "Money");
+  assertEquals(orderItem.children[0].object.name, "Money");
 });
 
 Deno.test("parse: throws on missing title", () => {

@@ -10,7 +10,7 @@ function makeDoc(): DomainDocument {
         kind: "aggregate",
         description: "Order aggregate",
         root: {
-          model: {
+          object: {
             name: "Order",
             kind: "entity",
             description: "Order aggregate",
@@ -21,14 +21,14 @@ function makeDoc(): DomainDocument {
           },
           children: [
             {
-              model: {
+              object: {
                 name: "OrderItem",
                 kind: "entity",
                 properties: [{ name: "quantity", type: "number" }],
               },
               children: [
                 {
-                  model: {
+                  object: {
                     name: "Money",
                     kind: "value_object",
                     properties: [
@@ -41,7 +41,7 @@ function makeDoc(): DomainDocument {
               ],
             },
             {
-              model: {
+              object: {
                 name: "OrderId",
                 kind: "value_object",
                 properties: [{ name: "value", type: "string" }],
@@ -117,14 +117,14 @@ Deno.test("render: includes dark mode CSS", () => {
   assertStringIncludes(html, "prefers-color-scheme: dark");
 });
 
-Deno.test("render: standalone model (no aggregate wrapper)", () => {
+Deno.test("render: standalone object (no aggregate wrapper)", () => {
   const doc: DomainDocument = {
     title: "Test",
     groups: [
       {
         kind: "standalone",
         root: {
-          model: {
+          object: {
             name: "Config",
             kind: "value_object",
             properties: [{ name: "key", type: "string" }],

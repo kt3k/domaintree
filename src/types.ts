@@ -3,8 +3,8 @@ export interface Property {
   type: string;
 }
 
-/** Input model as defined in the JSON file */
-export interface Model {
+/** Input domain object as defined in the JSON file */
+export interface DomainObject {
   name: string;
   kind: "entity" | "value_object";
   description?: string;
@@ -12,16 +12,16 @@ export interface Model {
 }
 
 /** Internal tree node built from aggregate inference */
-export interface ModelNode {
-  model: Model;
-  children: ModelNode[];
+export interface DomainObjectNode {
+  object: DomainObject;
+  children: DomainObjectNode[];
 }
 
-/** A display group: either an aggregate (with children) or a standalone model */
+/** A display group: either an aggregate (with children) or a standalone object */
 export interface DisplayGroup {
   /** "aggregate" if the root has children, "standalone" otherwise */
   kind: "aggregate" | "standalone";
-  root: ModelNode;
+  root: DomainObjectNode;
   description?: string;
 }
 
