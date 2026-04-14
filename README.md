@@ -24,6 +24,9 @@ npx domaintree build domains.json > output.html
 
 # Print the expected input schema as JSON Schema
 npx domaintree types
+
+# Validate an input file against the schema
+npx domaintree validate domains.json
 ```
 
 With Deno:
@@ -35,10 +38,11 @@ dx domaintree types
 
 ### Commands
 
-| Command              | Description                                    |
-| -------------------- | ---------------------------------------------- |
-| `build <input.json>` | Build HTML from a JSON domain model file       |
-| `types`              | Print the expected input schema as JSON Schema |
+| Command                 | Description                                    |
+| ----------------------- | ---------------------------------------------- |
+| `build <input.json>`    | Build HTML from a JSON domain model file       |
+| `types`                 | Print the expected input schema as JSON Schema |
+| `validate <input.json>` | Validate a JSON input file against the schema  |
 
 ### Options (build)
 
