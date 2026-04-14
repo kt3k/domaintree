@@ -1,6 +1,6 @@
 import { assertFalse, assertStringIncludes } from "@std/assert";
-import { render } from "../src/renderer.ts";
-import type { DomainDocument } from "../src/types.ts";
+import { render } from "./renderer.ts";
+import type { DomainDocument } from "./types.ts";
 
 function makeDoc(): DomainDocument {
   return {

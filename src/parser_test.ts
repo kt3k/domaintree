@@ -1,5 +1,5 @@
 import { assertEquals, assertThrows } from "@std/assert";
-import { parse } from "../src/parser.ts";
+import { parse } from "./parser.ts";
 
 Deno.test("parse: converts flat models YAML to DomainDocument", () => {
   const yaml = `
