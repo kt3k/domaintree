@@ -1,12 +1,10 @@
 {
   "version": "5",
   "specifiers": {
-    "jsr:@std/assert@*": "1.0.19",
     "jsr:@std/assert@1": "1.0.19",
     "jsr:@std/internal@^1.0.12": "1.0.12",
     "npm:citty@0": "0.2.2",
-    "npm:deno-test@^1.0.1": "1.0.2",
-    "npm:yaml@2": "2.8.3"
+    "npm:deno-test@^1.0.1": "1.0.2"
   },
   "jsr": {
     "@std/assert@1.0.19": {
@@ -32,10 +30,6 @@
         "@deno/shim-deno-test"
       ],
       "bin": true
-    },
-    "yaml@2.8.3": {
-      "integrity": "sha512-AvbaCLOO2Otw/lW5bmh9d/WEdcDFdQp2Z2ZUH3pX9U2ihyUY0nvLv7J6TrWowklRGPYbB/IuIMfYgxaCPg5Bpg==",
-      "bin": true
     }
   },
   "workspace": {
@@ -45,8 +39,7 @@
     "packageJson": {
       "dependencies": [
         "npm:citty@0",
-        "npm:deno-test@^1.0.1",
-        "npm:yaml@2"
+        "npm:deno-test@^1.0.1"
       ]
     }
   }

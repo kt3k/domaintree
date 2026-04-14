@@ -3,7 +3,7 @@ export interface Property {
   type: string;
 }
 
-/** Input model as defined in the YAML file */
+/** Input model as defined in the JSON file */
 export interface Model {
   name: string;
   type: "entity" | "value_object";

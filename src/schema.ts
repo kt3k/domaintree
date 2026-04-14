@@ -1,7 +1,7 @@
 export const inputSchema = {
   $schema: "https://json-schema.org/draft/2020-12/schema",
   title: "DomainTreeInput",
-  description: "Input schema for domaintree YAML files",
+  description: "Input schema for domaintree JSON files",
   type: "object",
   required: ["title", "models"],
   properties: {

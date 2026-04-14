@@ -1,6 +1,6 @@
 # domaintree Specification
 
-A CLI tool that takes domain model definitions (YAML) and renders them as a
+A CLI tool that takes domain model definitions (JSON) and renders them as a
 single self-contained HTML file.
 
 ## 1. Goals
@@ -16,78 +16,81 @@ See [mock.html](./mock.html) for a mock of the expected output.
 
 ## 2. Input Format
 
-A YAML file with a flat list of models:
+A JSON file with a flat list of models:
 
-```yaml
-title: "EC Site Domain Model"
-
-models:
-  - name: Order
-    type: entity
-    description: "Order aggregate"
-    properties:
-      - name: id
-        type: OrderId
-      - name: items
-        type: OrderItem
-      - name: orderedAt
-        type: Date
-
-  - name: OrderItem
-    type: entity
-    description: "Order line item"
-    properties:
-      - name: id
-        type: OrderItemId
-      - name: quantity
-        type: number
-      - name: unitPrice
-        type: Money
-
-  - name: Money
-    type: value_object
-    properties:
-      - name: amount
-        type: number
-      - name: currency
-        type: string
-
-  - name: OrderId
-    type: value_object
-    properties:
-      - name: value
-        type: string
-
-  - name: Customer
-    type: entity
-    description: "Customer aggregate"
-    properties:
-      - name: id
-        type: CustomerId
-      - name: name
-        type: PersonName
-      - name: email
-        type: Email
-
-  - name: PersonName
-    type: value_object
-    properties:
-      - name: firstName
-        type: string
-      - name: lastName
-        type: string
-
-  - name: Email
-    type: value_object
-    properties:
-      - name: value
-        type: string
-
-  - name: CustomerId
-    type: value_object
-    properties:
-      - name: value
-        type: string
+```json
+{
+  "title": "EC Site Domain Model",
+  "models": [
+    {
+      "name": "Order",
+      "type": "entity",
+      "description": "Order aggregate",
+      "properties": [
+        { "name": "id", "type": "OrderId" },
+        { "name": "items", "type": "OrderItem" },
+        { "name": "orderedAt", "type": "Date" }
+      ]
+    },
+    {
+      "name": "OrderItem",
+      "type": "entity",
+      "description": "Order line item",
+      "properties": [
+        { "name": "id", "type": "OrderItemId" },
+        { "name": "quantity", "type": "number" },
+        { "name": "unitPrice", "type": "Money" }
+      ]
+    },
+    {
+      "name": "Money",
+      "type": "value_object",
+      "properties": [
+        { "name": "amount", "type": "number" },
+        { "name": "currency", "type": "string" }
+      ]
+    },
+    {
+      "name": "OrderId",
+      "type": "value_object",
+      "properties": [
+        { "name": "value", "type": "string" }
+      ]
+    },
+    {
+      "name": "Customer",
+      "type": "entity",
+      "description": "Customer aggregate",
+      "properties": [
+        { "name": "id", "type": "CustomerId" },
+        { "name": "name", "type": "PersonName" },
+        { "name": "email", "type": "Email" }
+      ]
+    },
+    {
+      "name": "PersonName",
+      "type": "value_object",
+      "properties": [
+        { "name": "firstName", "type": "string" },
+        { "name": "lastName", "type": "string" }
+      ]
+    },
+    {
+      "name": "Email",
+      "type": "value_object",
+      "properties": [
+        { "name": "value", "type": "string" }
+      ]
+    },
+    {
+      "name": "CustomerId",
+      "type": "value_object",
+      "properties": [
+        { "name": "value", "type": "string" }
+      ]
+    }
+  ]
+}
 ```
 
 ### 2.1 Schema Definition
@@ -216,21 +219,21 @@ EC Site Domain Model
 ## 5. CLI Interface
 
 ```
-domaintree <input.yaml> [-o <output.html>]
+domaintree <input.json> [-o <output.html>]
 ```
 
 ### 5.1 Arguments
 
 | Argument       | Description                            |
 | -------------- | -------------------------------------- |
-| `<input.yaml>` | Path to the input YAML file (required) |
+| `<input.json>` | Path to the input JSON file (required) |
 
 ### 5.2 Options
 
 | Option                | Default           | Description                                      |
 | --------------------- | ----------------- | ------------------------------------------------ |
 | `-o, --output <path>` | stdout            | Output file path. Outputs to stdout when omitted |
-| `--title <title>`     | `title` from YAML | Override the title                               |
+| `--title <title>`     | `title` from JSON | Override the title                               |
 | `-v, --version`       | -                 | Show version                                     |
 | `-h, --help`          | -                 | Show help                                        |
 
@@ -238,13 +241,13 @@ domaintree <input.yaml> [-o <output.html>]
 
 ```bash
 # Output to a file
-npx domaintree domains.yaml -o output.html
+npx domaintree domains.json -o output.html
 
 # Output to stdout and pipe
-npx domaintree domains.yaml > output.html
+npx domaintree domains.json > output.html
 
 # Run with Deno
-deno run -A main.ts domains.yaml -o output.html
+deno run -A main.ts domains.json -o output.html
 ```
 
 ## 6. Tech Stack
@@ -256,7 +259,7 @@ deno run -A main.ts domains.yaml -o output.html
 | Execution Runtime   | Node / Deno / Bun (cross-runtime)                         |
 | Package Registry    | npm                                                       |
 | Testing             | deno-test (npm package)                                   |
-| YAML Parsing        | yaml (npm package)                                        |
+| JSON Parsing        | `JSON.parse` (built-in)                                   |
 | Build               | None (distribute TypeScript as-is, or transpile with dnt) |
 
 ## 7. Project Structure
@@ -267,14 +270,14 @@ domaintree/
 ├── mod.ts                 # Library entry point
 ├── src/
 │   ├── types.ts           # Internal type definitions
-│   ├── parser.ts          # YAML → internal model conversion
+│   ├── parser.ts          # JSON → internal model conversion
 │   ├── renderer.ts        # Internal model → HTML conversion
 │   └── template.ts        # HTML/CSS templates
 ├── test/
 │   ├── parser_test.ts     # Parser tests
 │   └── renderer_test.ts   # Renderer tests
 ├── examples/
-│   └── ec-site.yaml       # Sample input
+│   └── ec-site.json       # Sample input
 ├── deno.json              # Deno config + task definitions
 ├── spec.md                # This specification
 └── README.md
@@ -284,8 +287,8 @@ domaintree/
 
 - Test runner: `deno-test` (npm)
 - Test execution commands defined in `deno.json` `tasks`
-- Parser: Verify that YAML input is correctly converted to the internal model,
+- Parser: Verify that JSON input is correctly converted to the internal model,
   including aggregate inference from flat model list
 - Renderer: Verify that the HTML output from the internal model contains the
   expected elements
-- E2E: Feed a sample YAML and verify that the output HTML is valid
+- E2E: Feed a sample JSON and verify that the output HTML is valid
