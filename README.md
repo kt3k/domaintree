@@ -35,10 +35,10 @@ dx domaintree types
 
 ### Commands
 
-| Command                   | Description                                      |
-| ------------------------- | ------------------------------------------------ |
-| `build <input.yaml>`      | Build HTML from a YAML domain model file         |
-| `types`                   | Print the expected input schema as JSON Schema   |
+| Command              | Description                                    |
+| -------------------- | ---------------------------------------------- |
+| `build <input.yaml>` | Build HTML from a YAML domain model file       |
+| `types`              | Print the expected input schema as JSON Schema |
 
 ### Options (build)
 
