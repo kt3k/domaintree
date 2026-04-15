@@ -48,8 +48,8 @@ Dark mode: same as above but `data-theme="dark"` and output
 
 `1280x1600` gives a teaser-style cropped screenshot — content below is
 intentionally cut off. The goal is a short, aesthetically-sized README image,
-not a full-page capture. The PNG is exactly `window-size`, so a tight crop
-means a smaller file too.
+not a full-page capture. The PNG is exactly `window-size`, so a tight crop means
+a smaller file too.
 
 ## Verify
 
