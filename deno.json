@@ -1,7 +1,4 @@
 {
-  "name": "@domainchart/domainchart",
-  "version": "0.1.0",
-  "exports": "./mod.ts",
   "nodeModulesDir": "auto",
   "imports": {
     "@std/assert": "jsr:@std/assert@^1"
@@ -9,6 +6,7 @@
   "tasks": {
     "test": "deno test --allow-read --allow-env --allow-run",
     "run": "deno run --allow-read --allow-write --allow-env main.ts",
-    "example": "deno -A main.ts build examples/ec-site.json > example.html && open example.html"
+    "example": "deno -A main.ts build examples/ec-site.json > example.html && open example.html",
+    "build": "mkdir -p dist && deno bundle main.ts -o dist/main.js.tmp && (echo '#!/usr/bin/env node' && cat dist/main.js.tmp) > dist/main.js && rm dist/main.js.tmp && chmod +x dist/main.js"
   }
 }

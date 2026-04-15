@@ -16,13 +16,20 @@
   "license": "MIT",
   "author": "Yoshiya Hinosawa",
   "type": "module",
-  "main": "main.js",
+  "bin": {
+    "domainchart": "./dist/main.js"
+  },
+  "files": [
+    "dist"
+  ],
   "directories": {
     "example": "examples",
     "test": "test"
   },
   "scripts": {
-    "test": "npx deno-test"
+    "test": "deno-test",
+    "build": "deno task build",
+    "prepublishOnly": "deno task build"
   },
   "dependencies": {
     "citty": "^0"
