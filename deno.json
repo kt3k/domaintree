@@ -1,5 +1,5 @@
 {
-  "name": "@domaintree/domaintree",
+  "name": "@domaingraph/domaingraph",
   "version": "0.1.0",
   "exports": "./mod.ts",
   "nodeModulesDir": "auto",

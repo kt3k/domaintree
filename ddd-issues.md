@@ -1,6 +1,6 @@
-# domaintree DDD ユビキタス言語: 問題点リスト
+# domaingraph DDD ユビキタス言語: 問題点リスト
 
-`domaintree`
+`domaingraph`
 のコードベースに対するユビキタス言語分析で発見された問題点をまとめたドキュメント。
 
 ## 用語集レベルの問題点
