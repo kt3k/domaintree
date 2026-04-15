@@ -6,8 +6,6 @@ const LIGHT_VARS = `
     --border: #e7e5e4;
     --border-strong: #d6d3d1;
     --muted: #f5f5f4;
-    --aggregate-bg: #ffffff;
-    --aggregate-border: #d6d3d1;
     --tree-line: #d6d3d1;
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.04);`;
 
@@ -19,8 +17,6 @@ const DARK_VARS = `
     --border: #292524;
     --border-strong: #44403c;
     --muted: #1c1917;
-    --aggregate-bg: #1c1917;
-    --aggregate-border: #44403c;
     --tree-line: #44403c;
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);`;
 
@@ -72,17 +68,19 @@ const CSS = `  :root {${LIGHT_VARS}
 
   .aggregate-header {
     display: flex;
-    align-items: center;
+    align-items: baseline;
     gap: 10px;
-    padding: 14px 18px;
-    background: var(--aggregate-bg);
-    border: 1px solid var(--aggregate-border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-sm);
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+
+  .aggregate-header .desc {
+    font-weight: 400;
+    font-size: 13px;
+    color: var(--text-sub);
     letter-spacing: -0.01em;
-    margin-bottom: 16px;
   }
 
   .card-header .icon {
@@ -90,13 +88,6 @@ const CSS = `  :root {${LIGHT_VARS}
     height: 14px;
     opacity: 0.7;
     flex-shrink: 0;
-  }
-
-  .aggregate-header .desc {
-    font-weight: 400;
-    font-size: 13px;
-    color: var(--text-sub);
-    margin-left: 8px;
   }
 
   .standalone {

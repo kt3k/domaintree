@@ -67,6 +67,117 @@
       "properties": [
         { "name": "value", "type": "string" }
       ]
+    },
+    {
+      "name": "Product",
+      "kind": "entity",
+      "description": "Product aggregate",
+      "properties": [
+        { "name": "id", "type": "ProductId" },
+        { "name": "name", "type": "ProductName" },
+        { "name": "price", "type": "Price" },
+        { "name": "sku", "type": "Sku" }
+      ]
+    },
+    {
+      "name": "ProductId",
+      "kind": "value_object",
+      "properties": [
+        { "name": "value", "type": "string" }
+      ]
+    },
+    {
+      "name": "ProductName",
+      "kind": "value_object",
+      "properties": [
+        { "name": "value", "type": "string" }
+      ]
+    },
+    {
+      "name": "Price",
+      "kind": "value_object",
+      "properties": [
+        { "name": "amount", "type": "number" },
+        { "name": "currency", "type": "string" }
+      ]
+    },
+    {
+      "name": "Sku",
+      "kind": "value_object",
+      "properties": [
+        { "name": "value", "type": "string" }
+      ]
+    },
+    {
+      "name": "Cart",
+      "kind": "entity",
+      "description": "Cart aggregate",
+      "properties": [
+        { "name": "id", "type": "CartId" },
+        { "name": "items", "type": "CartItem" }
+      ]
+    },
+    {
+      "name": "CartItem",
+      "kind": "entity",
+      "description": "Cart line item",
+      "properties": [
+        { "name": "id", "type": "CartItemId" },
+        { "name": "productId", "type": "string" },
+        { "name": "quantity", "type": "number" }
+      ]
+    },
+    {
+      "name": "CartId",
+      "kind": "value_object",
+      "properties": [
+        { "name": "value", "type": "string" }
+      ]
+    },
+    {
+      "name": "CartItemId",
+      "kind": "value_object",
+      "properties": [
+        { "name": "value", "type": "string" }
+      ]
+    },
+    {
+      "name": "Coupon",
+      "kind": "entity",
+      "description": "Standalone promotional coupon",
+      "properties": [
+        { "name": "code", "type": "string" },
+        { "name": "discountRate", "type": "number" },
+        { "name": "expiresAt", "type": "Date" }
+      ]
+    },
+    {
+      "name": "Currency",
+      "kind": "value_object",
+      "description": "ISO 4217 currency code",
+      "properties": [
+        { "name": "code", "type": "string" },
+        { "name": "symbol", "type": "string" }
+      ]
+    },
+    {
+      "name": "TaxRate",
+      "kind": "value_object",
+      "description": "Regional tax rate",
+      "properties": [
+        { "name": "region", "type": "string" },
+        { "name": "rate", "type": "number" }
+      ]
+    },
+    {
+      "name": "PaymentMethod",
+      "kind": "entity",
+      "description": "Payment method registry",
+      "properties": [
+        { "name": "id", "type": "string" },
+        { "name": "type", "type": "string" },
+        { "name": "label", "type": "string" }
+      ]
     }
   ]
 }
