@@ -146,3 +146,61 @@ Deno.test("parse: throws on invalid model kind", () => {
 Deno.test("parse: throws on invalid JSON", () => {
   assertThrows(() => parse("not json"), Error, "Invalid JSON");
 });
+
+Deno.test("parse: resolves wrapper notations ([], ?, Array<T>, Set<T>)", () => {
+  const json = JSON.stringify({
+    title: "Test",
+    models: [
+      {
+        name: "Order",
+        kind: "entity",
+        properties: [
+          { name: "items", type: "OrderItem[]" },
+          { name: "coupon", type: "Coupon?" },
+          { name: "tags", type: "Array<Tag>" },
+          { name: "notes", type: "Set<Note>" },
+        ],
+      },
+      { name: "OrderItem", kind: "entity" },
+      { name: "Coupon", kind: "value_object" },
+      { name: "Tag", kind: "value_object" },
+      { name: "Note", kind: "value_object" },
+    ],
+  });
+
+  const doc = parse(json);
+  assertEquals(doc.groups.length, 1);
+  const root = doc.groups[0].root;
+  assertEquals(root.object.name, "Order");
+  assertEquals(root.children.map((c) => c.object.name), [
+    "OrderItem",
+    "Coupon",
+    "Tag",
+    "Note",
+  ]);
+  // Original type strings preserved for display
+  assertEquals(root.object.properties?.[0].type, "OrderItem[]");
+  assertEquals(root.object.properties?.[2].type, "Array<Tag>");
+});
+
+Deno.test("parse: resolves composed wrappers (Array<T>?, Set<T>[])", () => {
+  const json = JSON.stringify({
+    title: "Test",
+    models: [
+      {
+        name: "Order",
+        kind: "entity",
+        properties: [
+          { name: "items", type: "Array<OrderItem>?" },
+          { name: "tags", type: "Set<Tag>[]" },
+        ],
+      },
+      { name: "OrderItem", kind: "entity" },
+      { name: "Tag", kind: "value_object" },
+    ],
+  });
+
+  const doc = parse(json);
+  const root = doc.groups[0].root;
+  assertEquals(root.children.map((c) => c.object.name), ["OrderItem", "Tag"]);
+});
