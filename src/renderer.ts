@@ -6,6 +6,15 @@ import type {
 } from "./types.ts";
 import { escapeHtml, htmlFooter, htmlHeader } from "./template.ts";
 
+const SVG_ATTRS =
+  `xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"`;
+
+const ENTITY_ICON =
+  `<svg class="icon" data-icon="entity" ${SVG_ATTRS}><path d="M6.5 7.5a1 1 0 1 0 2 0a1 1 0 1 0 -2 0"/><path d="M3 6v5.172a2 2 0 0 0 .586 1.414l7.71 7.71a2.41 2.41 0 0 0 3.408 0l5.592 -5.592a2.41 2.41 0 0 0 0 -3.408l-7.71 -7.71a2 2 0 0 0 -1.414 -.586h-5.172a3 3 0 0 0 -3 3"/></svg>`;
+
+const VALUE_OBJECT_ICON =
+  `<svg class="icon" data-icon="value-object" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M7 3.34a10 10 0 1 1 -4.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 4.995 -8.336z"/></svg>`;
+
 export function render(doc: DomainDocument): string {
   const stats = collectStats(doc);
   const subtitle = formatSubtitle(stats);
@@ -30,7 +39,6 @@ function renderAggregate(group: DisplayGroup): string {
   const root = group.root;
   let html = `<div class="aggregate">\n`;
   html += `  <div class="aggregate-header">\n`;
-  html += `    <span class="icon">📦</span>\n`;
   html += `    <span>${escapeHtml(root.object.name)}</span>\n`;
   if (group.description) {
     html += `    <span class="desc">${escapeHtml(group.description)}</span>\n`;
@@ -87,7 +95,7 @@ function renderCard(object: DomainObject, indent: number): string {
 
   let html = `${pad}<div class="card ${cssClass}">\n`;
   html += `${pad}  <div class="card-header">\n`;
-  html += `${pad}    <span>${icon}</span>\n`;
+  html += `${pad}    ${icon}\n`;
   html += `${pad}    <span>${escapeHtml(object.name)}</span>\n`;
   html += `${pad}    <span class="badge">${badge}</span>\n`;
   html += `${pad}  </div>\n`;
@@ -120,9 +128,9 @@ function getCssClass(kind: DomainObject["kind"]): string {
 function getIcon(kind: DomainObject["kind"]): string {
   switch (kind) {
     case "entity":
-      return "🔷";
+      return ENTITY_ICON;
     case "value_object":
-      return "💎";
+      return VALUE_OBJECT_ICON;
   }
 }
 
