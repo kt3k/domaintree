@@ -71,7 +71,6 @@ Deno.test("render: includes title", () => {
 
 Deno.test("render: renders aggregate header", () => {
   const html = render(makeDoc());
-  assertStringIncludes(html, "📦");
   assertStringIncludes(html, "Order");
   assertStringIncludes(html, "Order aggregate");
   assertStringIncludes(html, "aggregate-header");
@@ -80,14 +79,14 @@ Deno.test("render: renders aggregate header", () => {
 Deno.test("render: renders entity card", () => {
   const html = render(makeDoc());
   assertStringIncludes(html, 'class="card entity"');
-  assertStringIncludes(html, "🔷");
+  assertStringIncludes(html, 'data-icon="entity"');
   assertStringIncludes(html, ">Entity<");
 });
 
 Deno.test("render: renders value object card", () => {
   const html = render(makeDoc());
   assertStringIncludes(html, 'class="card value-object"');
-  assertStringIncludes(html, "💎");
+  assertStringIncludes(html, 'data-icon="value-object"');
   assertStringIncludes(html, ">Value Object<");
 });
 

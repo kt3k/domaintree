@@ -1,34 +1,38 @@
-const CSS = `  :root {
-    --bg: #fafafa;
-    --text: #1a1a2e;
-    --text-sub: #555;
-    --border: #d0d0d0;
-    --aggregate-bg: #f0f0f5;
-    --aggregate-border: #4a4a6a;
-    --entity-bg: #e8f0fe;
-    --entity-border: #4285f4;
-    --entity-accent: #1a73e8;
-    --vo-bg: #f0ebf8;
-    --vo-border: #9c7cdb;
-    --vo-accent: #7c4dff;
-    --tree-line: #b0b0b0;
+const LIGHT_VARS = `
+    --bg: #fafaf9;
+    --card-bg: #ffffff;
+    --text: #1c1917;
+    --text-sub: #78716c;
+    --border: #e7e5e4;
+    --border-strong: #d6d3d1;
+    --muted: #f5f5f4;
+    --aggregate-bg: #ffffff;
+    --aggregate-border: #d6d3d1;
+    --tree-line: #d6d3d1;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.04);`;
+
+const DARK_VARS = `
+    --bg: #0c0a09;
+    --card-bg: #1c1917;
+    --text: #fafaf9;
+    --text-sub: #a8a29e;
+    --border: #292524;
+    --border-strong: #44403c;
+    --muted: #1c1917;
+    --aggregate-bg: #1c1917;
+    --aggregate-border: #44403c;
+    --tree-line: #44403c;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);`;
+
+const CSS = `  :root {${LIGHT_VARS}
+    --radius: 8px;
+  }
+
+  :root[data-theme="dark"] {${DARK_VARS}
   }
 
   @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #1a1a2e;
-      --text: #e0e0e8;
-      --text-sub: #a0a0b0;
-      --border: #3a3a4e;
-      --aggregate-bg: #22223a;
-      --aggregate-border: #8888aa;
-      --entity-bg: #1c2a44;
-      --entity-border: #5a9cf5;
-      --entity-accent: #7ab4ff;
-      --vo-bg: #2a2040;
-      --vo-border: #a88ce0;
-      --vo-accent: #c4a6ff;
-      --tree-line: #555568;
+    :root:not([data-theme="light"]) {${DARK_VARS}
     }
   }
 
@@ -39,51 +43,58 @@ const CSS = `  :root {
   }
 
   body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     background: var(--bg);
     color: var(--text);
-    padding: 40px;
-    line-height: 1.6;
+    padding: 48px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
   }
 
   h1 {
-    font-size: 28px;
-    font-weight: 700;
-    margin-bottom: 8px;
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: -0.025em;
+    margin-bottom: 6px;
   }
 
   .subtitle {
     color: var(--text-sub);
     font-size: 14px;
     margin-bottom: 40px;
-    padding-bottom: 20px;
-    border-bottom: 2px solid var(--border);
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
   }
 
   .aggregate {
-    margin-bottom: 48px;
+    margin-bottom: 40px;
   }
 
   .aggregate-header {
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 12px 16px;
+    padding: 14px 18px;
     background: var(--aggregate-bg);
-    border: 2px solid var(--aggregate-border);
-    border-radius: 8px;
-    font-size: 18px;
-    font-weight: 700;
+    border: 1px solid var(--aggregate-border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
     margin-bottom: 16px;
   }
 
-  .aggregate-header .icon {
-    font-size: 22px;
+  .card-header .icon {
+    width: 14px;
+    height: 14px;
+    opacity: 0.7;
+    flex-shrink: 0;
   }
 
   .aggregate-header .desc {
     font-weight: 400;
-    font-size: 14px;
+    font-size: 13px;
     color: var(--text-sub);
     margin-left: 8px;
   }
@@ -111,38 +122,40 @@ const CSS = `  :root {
 
   .tree-node {
     position: relative;
-    border-left: 2px solid var(--tree-line);
+    border-left: 1px solid var(--tree-line);
     padding: 8px 0 0 18px;
     margin-left: -20px;
   }
 
   .tree-node:last-child {
-    border-left: 2px solid transparent;
+    border-left: 1px solid transparent;
   }
 
   .tree-node::before {
     content: "";
     position: absolute;
-    left: -2px;
+    left: -1px;
     top: 24px;
-    width: 20px;
-    height: 2px;
+    width: 18px;
+    height: 1px;
     background: var(--tree-line);
   }
 
   .tree-node:last-child::after {
     content: "";
     position: absolute;
-    left: -2px;
+    left: -1px;
     top: 0;
-    height: 26px;
-    width: 2px;
+    height: 25px;
+    width: 1px;
     background: var(--tree-line);
   }
 
   .card {
-    border: 2px solid var(--border);
-    border-radius: 6px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
     margin: 0;
     overflow: hidden;
   }
@@ -151,30 +164,36 @@ const CSS = `  :root {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 8px 14px;
+    padding: 10px 14px;
     font-weight: 600;
-    font-size: 15px;
+    font-size: 14px;
+    letter-spacing: -0.01em;
   }
 
   .card-header .badge {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 500;
-    padding: 1px 8px;
-    border-radius: 10px;
-    opacity: 0.9;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 9999px;
+    border: 1px solid var(--border-strong);
+    color: var(--text-sub);
+    background: var(--muted);
   }
 
   .card-body {
-    padding: 8px 14px 10px;
+    padding: 10px 14px 12px;
     border-top: 1px solid var(--border);
+    background: var(--card-bg);
   }
 
   .prop {
-    font-size: 13px;
-    font-family: "SF Mono", "Fira Code", "Fira Mono", Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    font-family: ui-monospace, "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Consolas, monospace;
     padding: 2px 0;
     display: flex;
-    gap: 4px;
+    gap: 6px;
   }
 
   .prop-name {
@@ -185,29 +204,74 @@ const CSS = `  :root {
     color: var(--text-sub);
   }
 
-  .card.entity {
-    border-color: var(--entity-border);
-  }
   .card.entity .card-header {
-    background: var(--entity-bg);
-    color: var(--entity-accent);
-  }
-  .card.entity .badge {
-    background: var(--entity-accent);
-    color: #fff;
+    background: var(--muted);
   }
 
-  .card.value-object {
-    border-color: var(--vo-border);
-  }
   .card.value-object .card-header {
-    background: var(--vo-bg);
-    color: var(--vo-accent);
+    background: var(--card-bg);
   }
   .card.value-object .badge {
-    background: var(--vo-accent);
-    color: #fff;
+    background: transparent;
+  }
+
+  .theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--card-bg);
+    color: var(--text);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+    z-index: 10;
+  }
+  .theme-toggle:hover {
+    background: var(--muted);
+  }
+  .theme-toggle:focus-visible {
+    outline: 2px solid var(--text-sub);
+    outline-offset: 2px;
+  }
+  .theme-toggle svg {
+    width: 16px;
+    height: 16px;
+  }
+  .theme-toggle .sun { display: none; }
+  .theme-toggle .moon { display: block; }
+  :root[data-theme="dark"] .theme-toggle .sun { display: block; }
+  :root[data-theme="dark"] .theme-toggle .moon { display: none; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .theme-toggle .sun { display: block; }
+    :root:not([data-theme="light"]) .theme-toggle .moon { display: none; }
   }`;
+
+const INIT_SCRIPT = `(function(){
+  try {
+    var s = localStorage.getItem('theme');
+    var t = s || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', t);
+  } catch (e) {}
+  window.toggleTheme = function() {
+    var cur = document.documentElement.getAttribute('data-theme') || 'light';
+    var next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('theme', next); } catch (e) {}
+  };
+})();`;
+
+const TOGGLE_BUTTON =
+  `<button class="theme-toggle" type="button" aria-label="Toggle color theme" onclick="toggleTheme()">
+<svg class="sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+<svg class="moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+</button>`;
 
 export function htmlHeader(title: string): string {
   return `<!DOCTYPE html>
@@ -219,8 +283,10 @@ export function htmlHeader(title: string): string {
 <style>
 ${CSS}
 </style>
+<script>${INIT_SCRIPT}</script>
 </head>
 <body>
+${TOGGLE_BUTTON}
 `;
 }
 
