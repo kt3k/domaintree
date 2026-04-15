@@ -1,6 +1,6 @@
-# domaingraph DDD ユビキタス言語: 問題点リスト
+# domainchart DDD ユビキタス言語: 問題点リスト
 
-`domaingraph`
+`domainchart`
 のコードベースに対するユビキタス言語分析で発見された問題点をまとめたドキュメント。
 
 ## 用語集レベルの問題点

@@ -1,7 +1,7 @@
 export const inputSchema = {
   $schema: "https://json-schema.org/draft/2020-12/schema",
-  title: "DomainGraphInput",
-  description: "Input schema for domaingraph JSON files",
+  title: "DomainChartInput",
+  description: "Input schema for domainchart JSON files",
   type: "object",
   required: ["title", "models"],
   properties: {

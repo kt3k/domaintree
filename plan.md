@@ -1,4 +1,4 @@
-# Task Breakdown: Implement domaingraph CLI Tool
+# Task Breakdown: Implement domainchart CLI Tool
 
 ## Specifications
 
@@ -9,7 +9,7 @@
 - Four model types visually distinguished by color and icon: Aggregate (📦),
   Entity (🔷), Value Object (💎), Enum (📋)
 - Tree structure supports recursive nesting via `children`
-- CLI: `domaingraph <input.yaml> [-o output.html] [--title] [-v] [-h]`
+- CLI: `domainchart <input.yaml> [-o output.html] [--title] [-v] [-h]`
 - Tech Stack: TypeScript / Deno / npm `yaml` package / `deno-test@1.0.1`
 - `mock.html` serves as the reference for expected output
 
