@@ -1,8 +1,4 @@
 {
-  "name": "@domainchart/domainchart",
-  "version": "0.1.0",
-  "exports": "./mod.ts",
-  "nodeModulesDir": "auto",
   "imports": {
     "@std/assert": "jsr:@std/assert@^1"
   },

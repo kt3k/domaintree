@@ -22,7 +22,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "npx deno-test"
+    "test": "deno-test"
   },
   "dependencies": {
     "citty": "^0"
