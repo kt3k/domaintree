@@ -112,7 +112,7 @@ const CSS = `  :root {
   .tree-node {
     position: relative;
     border-left: 2px solid var(--tree-line);
-    padding: 4px 0 4px 18px;
+    padding: 8px 0 0 18px;
     margin-left: -20px;
   }
 
