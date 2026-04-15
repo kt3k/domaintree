@@ -1,4 +1,4 @@
-# domaingraph
+# domainchart
 
 A CLI tool that takes DDD domain model definitions (JSON) and renders them as a
 single self-contained HTML file with a file-tree-style layout.
@@ -17,23 +17,23 @@ single self-contained HTML file with a file-tree-style layout.
 
 ```bash
 # Build HTML from JSON (output to a file)
-npx domaingraph build domains.json -o output.html
+npx domainchart build domains.json -o output.html
 
 # Output to stdout
-npx domaingraph build domains.json > output.html
+npx domainchart build domains.json > output.html
 
 # Print the expected input schema as JSON Schema
-npx domaingraph types
+npx domainchart types
 
 # Validate an input file against the schema
-npx domaingraph validate domains.json
+npx domainchart validate domains.json
 ```
 
 With Deno:
 
 ```bash
-dx domaingraph build domains.json -o output.html
-dx domaingraph types
+dx domainchart build domains.json -o output.html
+dx domainchart types
 ```
 
 ### Commands
@@ -100,7 +100,7 @@ Each model has a `kind` (`entity` or `value_object`), while each property has a
 `type` (either a primitive name or another model's name — used to infer
 parent-child relationships).
 
-Run `npx domaingraph types` (or `dx domaingraph types`) to get the full JSON
+Run `npx domainchart types` (or `dx domainchart types`) to get the full JSON
 Schema. See [spec.md](./spec.md) for the schema definition.
 
 ## Development

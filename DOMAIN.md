@@ -1,6 +1,6 @@
 # Domain Model
 
-`domaingraph` 自身のドメインを記述する。本ツールはユーザーが定義した DDD
+`domainchart` 自身のドメインを記述する。本ツールはユーザーが定義した DDD
 モデルを HTML として可視化する CLI/ライブラリであり、ここで言う「ドメイン」は
 **ドメインモデルの可視化処理そのもの** を指す (ユーザー入力に現れる Order /
 Customer などのサンプル概念ではない)。
@@ -40,7 +40,7 @@ Host Service** 的に固定 HTML 構造を提供。
 
 ## Aggregates
 
-ここでの「Aggregate」は domaingraph の **内部モデル** の集約を指す
+ここでの「Aggregate」は domainchart の **内部モデル** の集約を指す
 (ユーザー入力の Aggregate 推論とは別レイヤ)。
 
 ### DomainDocument

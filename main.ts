@@ -119,7 +119,7 @@ const validateCommand = defineCommand({
 
 const main = defineCommand({
   meta: {
-    name: "domaingraph",
+    name: "domainchart",
     version: VERSION,
     description: "Visualize DDD domain models as HTML",
   },
