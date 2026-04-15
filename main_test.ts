@@ -33,13 +33,13 @@ Deno.test("cli: build with --title overrides title", async () => {
 Deno.test("cli: types outputs JSON Schema", async () => {
   const { stdout } = await run("types");
   const schema = JSON.parse(stdout);
-  assertEquals(schema.title, "DomainTreeInput");
+  assertEquals(schema.title, "DomainGraphInput");
   assertEquals(typeof schema.properties?.models, "object");
 });
 
 Deno.test("cli: --help shows usage", async () => {
   const { stdout } = await run("--help");
-  assertStringIncludes(stdout, "domaintree");
+  assertStringIncludes(stdout, "domaingraph");
   assertStringIncludes(stdout, "build");
   assertStringIncludes(stdout, "types");
 });

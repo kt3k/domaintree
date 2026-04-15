@@ -1,4 +1,4 @@
-# domaintree Specification
+# domaingraph Specification
 
 A CLI tool that takes domain model definitions (JSON) and renders them as a
 single self-contained HTML file.
@@ -219,7 +219,7 @@ EC Site Domain Model
 ## 5. CLI Interface
 
 ```
-domaintree <input.json> [-o <output.html>]
+domaingraph <input.json> [-o <output.html>]
 ```
 
 ### 5.1 Arguments
@@ -241,10 +241,10 @@ domaintree <input.json> [-o <output.html>]
 
 ```bash
 # Output to a file
-npx domaintree domains.json -o output.html
+npx domaingraph domains.json -o output.html
 
 # Output to stdout and pipe
-npx domaintree domains.json > output.html
+npx domaingraph domains.json > output.html
 
 # Run with Deno
 deno run -A main.ts domains.json -o output.html
@@ -265,7 +265,7 @@ deno run -A main.ts domains.json -o output.html
 ## 7. Project Structure
 
 ```
-domaintree/
+domaingraph/
 ├── main.ts                # CLI entry point
 ├── mod.ts                 # Library entry point
 ├── src/
