@@ -1,3 +1,5 @@
+import { readFileSync, writeFileSync } from "node:fs";
+import { exit } from "node:process";
 import { defineCommand, runMain } from "citty";
 import { parse } from "./src/parser.ts";
 import { render } from "./src/renderer.ts";
@@ -30,10 +32,10 @@ const buildCommand = defineCommand({
   run({ args }) {
     let jsonContent: string;
     try {
-      jsonContent = Deno.readTextFileSync(args.input);
+      jsonContent = readFileSync(args.input, "utf-8");
     } catch {
       console.error(`Error: Cannot read file: ${args.input}`);
-      Deno.exit(1);
+      exit(1);
     }
 
     let doc;
@@ -41,7 +43,7 @@ const buildCommand = defineCommand({
       doc = parse(jsonContent);
     } catch (e) {
       console.error(`Error: ${(e as Error).message}`);
-      Deno.exit(1);
+      exit(1);
     }
 
     if (args.title) {
@@ -52,11 +54,11 @@ const buildCommand = defineCommand({
 
     if (args.output) {
       try {
-        Deno.writeTextFileSync(args.output, html);
+        writeFileSync(args.output, html);
         console.error(`Written to ${args.output}`);
       } catch {
         console.error(`Error: Cannot write to: ${args.output}`);
-        Deno.exit(1);
+        exit(1);
       }
     } else {
       console.log(html);
@@ -89,10 +91,10 @@ const validateCommand = defineCommand({
   run({ args }) {
     let jsonContent: string;
     try {
-      jsonContent = Deno.readTextFileSync(args.input);
+      jsonContent = readFileSync(args.input, "utf-8");
     } catch {
       console.error(`Error: Cannot read file: ${args.input}`);
-      Deno.exit(1);
+      exit(1);
     }
 
     let data: unknown;
@@ -100,7 +102,7 @@ const validateCommand = defineCommand({
       data = JSON.parse(jsonContent);
     } catch (e) {
       console.error(`Invalid JSON: ${(e as Error).message}`);
-      Deno.exit(1);
+      exit(1);
     }
 
     const errors = validate(data);
@@ -113,7 +115,7 @@ const validateCommand = defineCommand({
       console.error(`${err.path}: ${err.message}`);
     }
     console.error(`\n${errors.length} error(s)`);
-    Deno.exit(1);
+    exit(1);
   },
 });
 
