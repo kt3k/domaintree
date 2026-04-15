@@ -1,10 +1,10 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { exit } from "node:process";
 import { defineCommand, runMain } from "citty";
-import { parse } from "./src/parser.ts";
-import { render } from "./src/renderer.ts";
-import { inputSchema } from "./src/schema.ts";
-import { validate } from "./src/validator.ts";
+import { parse } from "./parser.ts";
+import { render } from "./renderer.ts";
+import { inputSchema } from "./schema.ts";
+import { validate } from "./validator.ts";
 
 const VERSION = "0.1.0";
 

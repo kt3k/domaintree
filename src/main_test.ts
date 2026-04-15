@@ -5,7 +5,7 @@ function run(...args: string[]): Promise<{ stdout: string; stderr: string }> {
   return new Promise((resolve, reject) => {
     execFile(
       "deno",
-      ["run", "-A", "main.ts", ...args],
+      ["run", "-A", "src/main.ts", ...args],
       (err, stdout, stderr) => {
         if (err) reject(err);
         else resolve({ stdout, stderr });

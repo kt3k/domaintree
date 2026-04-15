@@ -5,8 +5,8 @@
   },
   "tasks": {
     "test": "deno test --allow-read --allow-env --allow-run",
-    "run": "deno run --allow-read --allow-write --allow-env main.ts",
-    "example": "deno -A main.ts build examples/ec-site.json > example.html && open example.html",
-    "build": "mkdir -p dist && deno bundle main.ts -o dist/main.js.tmp && (echo '#!/usr/bin/env node' && cat dist/main.js.tmp) > dist/main.js && rm dist/main.js.tmp && chmod +x dist/main.js"
+    "run": "deno run --allow-read --allow-write --allow-env src/main.ts",
+    "example": "deno -A src/main.ts build examples/ec-site.json > example.html && open example.html",
+    "build": "mkdir -p dist && deno bundle src/main.ts -o dist/main.js.tmp && (echo '#!/usr/bin/env node' && cat dist/main.js.tmp) > dist/main.js && rm dist/main.js.tmp && chmod +x dist/main.js"
   }
 }
