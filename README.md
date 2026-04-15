@@ -3,7 +3,7 @@
 A CLI tool that takes DDD domain model definitions (JSON) and renders them as a
 single self-contained HTML file with a file-tree-style layout.
 
-![screenshot](docs/screenshot.png)
+![screenshot](.github/screenshot.png)
 
 ## Features
 
