@@ -93,6 +93,25 @@ function parseProperty(raw: unknown, path: string): Property {
 }
 
 /**
+ * Strip common wrapper notations to extract the inner type name used for
+ * reference resolution. Supports `T[]`, `T?`, `Array<T>`, `Set<T>`, and their
+ * compositions (e.g. `Array<T>?`, `Set<T>[]`). The original type string is
+ * preserved on the property for display.
+ */
+function extractTypeName(type: string): string {
+  let t = type.trim();
+  for (;;) {
+    const before = t;
+    if (t.endsWith("?")) t = t.slice(0, -1).trimEnd();
+    if (t.endsWith("[]")) t = t.slice(0, -2).trimEnd();
+    const m = t.match(/^(?:Array|Set)<(.+)>$/);
+    if (m) t = m[1].trim();
+    if (t === before) break;
+  }
+  return t;
+}
+
+/**
  * Infer aggregate boundaries from flat domain object list.
  *
  * 1. Build a reference graph: property types that match domain object names.
@@ -110,8 +129,9 @@ function inferGroups(objects: DomainObject[]): DisplayGroup[] {
   for (const obj of objects) {
     if (obj.properties) {
       for (const prop of obj.properties) {
-        if (objectMap.has(prop.type)) {
-          referenced.add(prop.type);
+        const name = extractTypeName(prop.type);
+        if (objectMap.has(name)) {
+          referenced.add(name);
         }
       }
     }
@@ -141,7 +161,7 @@ function buildTree(
 
   if (object.properties) {
     for (const prop of object.properties) {
-      const child = objectMap.get(prop.type);
+      const child = objectMap.get(extractTypeName(prop.type));
       if (child && !visited.has(child.name)) {
         children.push(buildTree(child, objectMap, visited));
       }

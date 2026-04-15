@@ -7,7 +7,7 @@
       "description": "Order aggregate",
       "properties": [
         { "name": "id", "type": "OrderId" },
-        { "name": "items", "type": "OrderItem" },
+        { "name": "items", "type": "OrderItem[]" },
         { "name": "orderedAt", "type": "Date" }
       ]
     },
@@ -43,7 +43,7 @@
       "properties": [
         { "name": "id", "type": "CustomerId" },
         { "name": "name", "type": "PersonName" },
-        { "name": "email", "type": "Email" }
+        { "name": "email", "type": "Email?" }
       ]
     },
     {
@@ -114,7 +114,7 @@
       "description": "Cart aggregate",
       "properties": [
         { "name": "id", "type": "CartId" },
-        { "name": "items", "type": "CartItem" }
+        { "name": "items", "type": "Array<CartItem>" }
       ]
     },
     {

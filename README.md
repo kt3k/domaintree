@@ -69,7 +69,7 @@ boundaries from property type references.
       "description": "Order aggregate",
       "properties": [
         { "name": "id", "type": "OrderId" },
-        { "name": "items", "type": "OrderItem" }
+        { "name": "items", "type": "OrderItem[]" }
       ]
     },
     {
@@ -101,7 +101,9 @@ boundaries from property type references.
 
 Each model has a `kind` (`entity` or `value_object`), while each property has a
 `type` (either a primitive name or another model's name — used to infer
-parent-child relationships).
+parent-child relationships). Wrapper notations are stripped before matching, so
+`OrderItem[]`, `OrderItem?`, `Array<OrderItem>`, and `Set<OrderItem>` all
+resolve to `OrderItem`.
 
 Run `npx domainchart types` (or `dx domainchart types`) to get the full JSON
 Schema. See [spec.md](./spec.md) for the schema definition.
