@@ -106,8 +106,10 @@ Schema. See [spec.md](./spec.md) for the schema definition.
 ## Development
 
 ```bash
-# Run tests
+# Run tests in Deno
 deno test --allow-read --allow-env --allow-run
+# Run tests in Node
+npx deno-test
 
 # Format
 deno fmt
