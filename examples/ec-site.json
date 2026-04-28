@@ -9,7 +9,29 @@
         { "name": "id", "type": "OrderId" },
         { "name": "customer", "type": "Customer" },
         { "name": "items", "type": "OrderItem[]" },
+        {
+          "name": "payment",
+          "type": "CreditCardPayment | BankTransferPayment"
+        },
         { "name": "orderedAt", "type": "Date" }
+      ]
+    },
+    {
+      "name": "CreditCardPayment",
+      "kind": "value_object",
+      "description": "Payment via credit card",
+      "properties": [
+        { "name": "last4", "type": "string" },
+        { "name": "brand", "type": "string" }
+      ]
+    },
+    {
+      "name": "BankTransferPayment",
+      "kind": "value_object",
+      "description": "Payment via bank transfer",
+      "properties": [
+        { "name": "bankName", "type": "string" },
+        { "name": "accountLast4", "type": "string" }
       ]
     },
     {

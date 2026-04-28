@@ -183,6 +183,66 @@ Deno.test("parse: resolves wrapper notations ([], ?, Array<T>, Set<T>)", () => {
   assertEquals(root.object.properties?.[2].type, "Array<Tag>");
 });
 
+Deno.test("parse: resolves union types (Foo | Bar)", () => {
+  const json = JSON.stringify({
+    title: "Test",
+    models: [
+      {
+        name: "Order",
+        kind: "entity",
+        properties: [
+          { name: "payment", type: "CreditCard | BankTransfer" },
+        ],
+      },
+      { name: "CreditCard", kind: "value_object" },
+      { name: "BankTransfer", kind: "value_object" },
+    ],
+  });
+
+  const doc = parse(json);
+  assertEquals(doc.groups.length, 1);
+  const root = doc.groups[0].root;
+  assertEquals(root.object.name, "Order");
+  assertEquals(root.children.map((c) => c.object.name), [
+    "CreditCard",
+    "BankTransfer",
+  ]);
+  // Original union string preserved for display
+  assertEquals(
+    root.object.properties?.[0].type,
+    "CreditCard | BankTransfer",
+  );
+});
+
+Deno.test("parse: union types compose with wrappers (Array<Foo | Bar>, A[] | B?)", () => {
+  const json = JSON.stringify({
+    title: "Test",
+    models: [
+      {
+        name: "Order",
+        kind: "entity",
+        properties: [
+          { name: "events", type: "Array<Placed | Shipped>" },
+          { name: "extra", type: "Coupon[] | Note?" },
+        ],
+      },
+      { name: "Placed", kind: "value_object" },
+      { name: "Shipped", kind: "value_object" },
+      { name: "Coupon", kind: "value_object" },
+      { name: "Note", kind: "value_object" },
+    ],
+  });
+
+  const doc = parse(json);
+  const root = doc.groups[0].root;
+  assertEquals(root.children.map((c) => c.object.name), [
+    "Placed",
+    "Shipped",
+    "Coupon",
+    "Note",
+  ]);
+});
+
 Deno.test("parse: isAggregateRoot forces a referenced model into its own root", () => {
   const json = JSON.stringify({
     title: "Test",

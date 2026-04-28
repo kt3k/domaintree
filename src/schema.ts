@@ -49,7 +49,7 @@ export const inputSchema = {
                 type: {
                   type: "string",
                   description:
-                    "Type name. If it matches another model's name, a parent-child relationship is inferred. Wrapper notations are stripped before matching: `T[]`, `T?`, `Array<T>`, `Set<T>`, and their compositions (e.g. `Array<T>?`, `Set<T>[]`)",
+                    "Type name. If it matches another model's name, a parent-child relationship is inferred. Wrapper notations are stripped before matching: `T[]`, `T?`, `Array<T>`, `Set<T>`, and their compositions (e.g. `Array<T>?`, `Set<T>[]`). Union types `A | B` are supported and treat each member as a reference (e.g. `Foo | Bar`, `Array<Foo | Bar>`).",
                 },
               },
               additionalProperties: false,

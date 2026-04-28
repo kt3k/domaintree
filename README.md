@@ -103,7 +103,9 @@ Each model has a `kind` (`entity` or `value_object`), while each property has a
 `type` (either a primitive name or another model's name — used to infer
 parent-child relationships). Wrapper notations are stripped before matching, so
 `OrderItem[]`, `OrderItem?`, `Array<OrderItem>`, and `Set<OrderItem>` all
-resolve to `OrderItem`.
+resolve to `OrderItem`. Union types like `Foo | Bar` (including nested forms
+such as `Array<Foo | Bar>`) are supported — each member is treated as a
+reference.
 
 Run `npx domainchart types` (or `dx domainchart types`) to get the full JSON
 Schema. See [spec.md](./spec.md) for the schema definition.

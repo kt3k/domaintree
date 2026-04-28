@@ -97,22 +97,51 @@ function parseProperty(raw: unknown, path: string): Property {
 }
 
 /**
- * Strip common wrapper notations to extract the inner type name used for
- * reference resolution. Supports `T[]`, `T?`, `Array<T>`, `Set<T>`, and their
- * compositions (e.g. `Array<T>?`, `Set<T>[]`). The original type string is
- * preserved on the property for display.
+ * Extract inner type names from a property type string for reference
+ * resolution. Supports wrapper notations `T[]`, `T?`, `Array<T>`, `Set<T>`,
+ * union types `A | B` (any arity), and their compositions (e.g. `A[] | B?`,
+ * `Array<A | B>`). The original type string is preserved on the property
+ * for display.
  */
-function extractTypeName(type: string): string {
-  let t = type.trim();
-  for (;;) {
-    const before = t;
-    if (t.endsWith("?")) t = t.slice(0, -1).trimEnd();
-    if (t.endsWith("[]")) t = t.slice(0, -2).trimEnd();
-    const m = t.match(/^(?:Array|Set)<(.+)>$/);
-    if (m) t = m[1].trim();
-    if (t === before) break;
+function extractTypeNames(type: string): string[] {
+  const t = type.trim();
+  if (t === "") return [];
+
+  const parts = splitTopLevelUnion(t);
+  if (parts.length > 1) {
+    return parts.flatMap(extractTypeNames);
   }
-  return t;
+
+  let s = t;
+  for (;;) {
+    const before = s;
+    if (s.endsWith("?")) s = s.slice(0, -1).trimEnd();
+    if (s.endsWith("[]")) s = s.slice(0, -2).trimEnd();
+    const m = s.match(/^(?:Array|Set)<(.+)>$/);
+    if (m) return extractTypeNames(m[1]);
+    if (s === before) break;
+  }
+  return [s];
+}
+
+function splitTopLevelUnion(s: string): string[] {
+  const parts: string[] = [];
+  let depth = 0;
+  let buf = "";
+  for (const ch of s) {
+    if (ch === "<") depth++;
+    else if (ch === ">") depth--;
+    else if (ch === "|" && depth === 0) {
+      const trimmed = buf.trim();
+      if (trimmed !== "") parts.push(trimmed);
+      buf = "";
+      continue;
+    }
+    buf += ch;
+  }
+  const trimmed = buf.trim();
+  if (trimmed !== "") parts.push(trimmed);
+  return parts;
 }
 
 /**
@@ -137,9 +166,10 @@ function inferGroups(objects: DomainObject[]): DisplayGroup[] {
   for (const obj of objects) {
     if (obj.properties) {
       for (const prop of obj.properties) {
-        const name = extractTypeName(prop.type);
-        if (objectMap.has(name)) {
-          referenced.add(name);
+        for (const name of extractTypeNames(prop.type)) {
+          if (objectMap.has(name)) {
+            referenced.add(name);
+          }
         }
       }
     }
@@ -178,9 +208,11 @@ function buildTree(
 
   if (object.properties) {
     for (const prop of object.properties) {
-      const child = objectMap.get(extractTypeName(prop.type));
-      if (child && !visited.has(child.name)) {
-        children.push(buildTree(child, objectMap, visited));
+      for (const name of extractTypeNames(prop.type)) {
+        const child = objectMap.get(name);
+        if (child && !visited.has(child.name)) {
+          children.push(buildTree(child, objectMap, visited));
+        }
       }
     }
   }
