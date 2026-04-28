@@ -15,6 +15,18 @@ const ENTITY_ICON =
 const VALUE_OBJECT_ICON =
   `<svg class="icon" data-icon="value-object" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M7 3.34a10 10 0 1 1 -4.995 8.984l-.005 -.324l.005 -.324a10 10 0 0 1 4.995 -8.336z"/></svg>`;
 
+const KIND_META: Record<
+  DomainObject["kind"],
+  { cssClass: string; icon: string; badge: string }
+> = {
+  entity: { cssClass: "entity", icon: ENTITY_ICON, badge: "Entity" },
+  value_object: {
+    cssClass: "value-object",
+    icon: VALUE_OBJECT_ICON,
+    badge: "Value Object",
+  },
+};
+
 export function render(doc: DomainDocument): string {
   const stats = collectStats(doc);
   const subtitle = formatSubtitle(stats);
@@ -45,7 +57,6 @@ function renderAggregate(group: DisplayGroup): string {
   }
   html += `  </div>\n`;
 
-  // Root card displayed directly (not inside tree lines)
   html += renderCard(root.object, 1);
 
   if (root.children.length > 0) {
@@ -66,16 +77,12 @@ function renderStandalone(group: DisplayGroup): string {
   return html;
 }
 
-function renderTreeNode(
-  node: DomainObjectNode,
-  indent: number,
-  expandChildren = true,
-): string {
+function renderTreeNode(node: DomainObjectNode, indent: number): string {
   const pad = "  ".repeat(indent);
   let html = `${pad}<li class="tree-node">\n`;
   html += renderCard(node.object, indent + 1);
 
-  if (expandChildren && node.children.length > 0) {
+  if (node.children.length > 0) {
     html += `${pad}  <ul class="tree">\n`;
     for (const child of node.children) {
       html += renderTreeNode(child, indent + 2);
@@ -89,15 +96,13 @@ function renderTreeNode(
 
 function renderCard(object: DomainObject, indent: number): string {
   const pad = "  ".repeat(indent);
-  const cssClass = getCssClass(object.kind);
-  const icon = getIcon(object.kind);
-  const badge = getBadgeLabel(object.kind);
+  const meta = KIND_META[object.kind];
 
-  let html = `${pad}<div class="card ${cssClass}">\n`;
+  let html = `${pad}<div class="card ${meta.cssClass}">\n`;
   html += `${pad}  <div class="card-header">\n`;
-  html += `${pad}    ${icon}\n`;
+  html += `${pad}    ${meta.icon}\n`;
   html += `${pad}    <span>${escapeHtml(object.name)}</span>\n`;
-  html += `${pad}    <span class="badge">${badge}</span>\n`;
+  html += `${pad}    <span class="badge">${meta.badge}</span>\n`;
   html += `${pad}  </div>\n`;
 
   html += `${pad}  <div class="card-body">\n`;
@@ -114,33 +119,6 @@ function renderCard(object: DomainObject, indent: number): string {
 
   html += `${pad}</div>\n`;
   return html;
-}
-
-function getCssClass(kind: DomainObject["kind"]): string {
-  switch (kind) {
-    case "entity":
-      return "entity";
-    case "value_object":
-      return "value-object";
-  }
-}
-
-function getIcon(kind: DomainObject["kind"]): string {
-  switch (kind) {
-    case "entity":
-      return ENTITY_ICON;
-    case "value_object":
-      return VALUE_OBJECT_ICON;
-  }
-}
-
-function getBadgeLabel(kind: DomainObject["kind"]): string {
-  switch (kind) {
-    case "entity":
-      return "Entity";
-    case "value_object":
-      return "Value Object";
-  }
 }
 
 interface Stats {
@@ -174,16 +152,16 @@ function countObjects(node: DomainObjectNode, stats: Stats): void {
   }
 }
 
+function pluralize(n: number, singular: string, plural: string): string {
+  return `${n} ${n === 1 ? singular : plural}`;
+}
+
 function formatSubtitle(stats: Stats): string {
   const parts: string[] = [];
   if (stats.aggregates > 0) {
-    parts.push(
-      `${stats.aggregates} Aggregate${stats.aggregates !== 1 ? "s" : ""}`,
-    );
+    parts.push(pluralize(stats.aggregates, "Aggregate", "Aggregates"));
   }
-  parts.push(`${stats.entities} Entit${stats.entities !== 1 ? "ies" : "y"}`);
-  parts.push(
-    `${stats.valueObjects} Value Object${stats.valueObjects !== 1 ? "s" : ""}`,
-  );
+  parts.push(pluralize(stats.entities, "Entity", "Entities"));
+  parts.push(pluralize(stats.valueObjects, "Value Object", "Value Objects"));
   return parts.join(" &middot; ");
 }

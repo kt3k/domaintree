@@ -8,6 +8,15 @@ import { validate } from "./validator.ts";
 
 const VERSION = "0.1.0";
 
+function readFileOrExit(path: string): string {
+  try {
+    return readFileSync(path, "utf-8");
+  } catch {
+    console.error(`Error: Cannot read file: ${path}`);
+    exit(1);
+  }
+}
+
 const buildCommand = defineCommand({
   meta: {
     name: "build",
@@ -30,13 +39,7 @@ const buildCommand = defineCommand({
     },
   },
   run({ args }) {
-    let jsonContent: string;
-    try {
-      jsonContent = readFileSync(args.input, "utf-8");
-    } catch {
-      console.error(`Error: Cannot read file: ${args.input}`);
-      exit(1);
-    }
+    const jsonContent = readFileOrExit(args.input);
 
     let doc;
     try {
@@ -89,13 +92,7 @@ const validateCommand = defineCommand({
     },
   },
   run({ args }) {
-    let jsonContent: string;
-    try {
-      jsonContent = readFileSync(args.input, "utf-8");
-    } catch {
-      console.error(`Error: Cannot read file: ${args.input}`);
-      exit(1);
-    }
+    const jsonContent = readFileOrExit(args.input);
 
     let data: unknown;
     try {

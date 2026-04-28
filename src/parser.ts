@@ -6,6 +6,21 @@ import type {
   Property,
 } from "./types.ts";
 
+const KINDS = ["entity", "value_object"] as const;
+
+const WRAPPER_RE = /^(?:Array|Set)<(.+)>$/;
+
+function requireNonEmptyString(
+  value: unknown,
+  path: string,
+  field: string,
+): string {
+  if (typeof value !== "string" || value.trim() === "") {
+    throw new Error(`${path}: missing required field "${field}"`);
+  }
+  return value;
+}
+
 export function parse(jsonString: string): DomainDocument {
   let raw: unknown;
   try {
@@ -44,20 +59,19 @@ function parseDomainObject(raw: unknown, path: string): DomainObject {
   }
 
   const obj = raw as Record<string, unknown>;
+  const name = requireNonEmptyString(obj.name, path, "name");
 
-  if (typeof obj.name !== "string" || obj.name.trim() === "") {
-    throw new Error(`${path}: missing required field "name"`);
-  }
-
-  const validKinds = ["entity", "value_object"];
-  if (typeof obj.kind !== "string" || !validKinds.includes(obj.kind)) {
+  if (
+    typeof obj.kind !== "string" ||
+    !(KINDS as readonly string[]).includes(obj.kind)
+  ) {
     throw new Error(
-      `${path} (${obj.name}): "kind" must be one of: ${validKinds.join(", ")}`,
+      `${path} (${name}): "kind" must be one of: ${KINDS.join(", ")}`,
     );
   }
 
   const domainObject: DomainObject = {
-    name: obj.name,
+    name,
     kind: obj.kind as DomainObject["kind"],
   };
 
@@ -84,16 +98,9 @@ function parseProperty(raw: unknown, path: string): Property {
   }
 
   const obj = raw as Record<string, unknown>;
-
-  if (typeof obj.name !== "string" || obj.name.trim() === "") {
-    throw new Error(`${path}: missing required field "name"`);
-  }
-
-  if (typeof obj.type !== "string" || obj.type.trim() === "") {
-    throw new Error(`${path}: missing required field "type"`);
-  }
-
-  return { name: obj.name, type: obj.type };
+  const name = requireNonEmptyString(obj.name, path, "name");
+  const type = requireNonEmptyString(obj.type, path, "type");
+  return { name, type };
 }
 
 /**
@@ -117,7 +124,7 @@ function extractTypeNames(type: string): string[] {
     const before = s;
     if (s.endsWith("?")) s = s.slice(0, -1).trimEnd();
     if (s.endsWith("[]")) s = s.slice(0, -2).trimEnd();
-    const m = s.match(/^(?:Array|Set)<(.+)>$/);
+    const m = s.match(WRAPPER_RE);
     if (m) return extractTypeNames(m[1]);
     if (s === before) break;
   }
@@ -161,7 +168,6 @@ function inferGroups(objects: DomainObject[]): DisplayGroup[] {
     objectMap.set(obj.name, obj);
   }
 
-  // Track which domain objects are referenced by others
   const referenced = new Set<string>();
   for (const obj of objects) {
     if (obj.properties) {
@@ -179,7 +185,6 @@ function inferGroups(objects: DomainObject[]): DisplayGroup[] {
     objects.filter((o) => o.isAggregateRoot).map((o) => o.name),
   );
 
-  // Roots: explicitly flagged OR not referenced by any other
   const roots = objects.filter(
     (o) => explicitRoots.has(o.name) || !referenced.has(o.name),
   );
@@ -201,17 +206,17 @@ function inferGroups(objects: DomainObject[]): DisplayGroup[] {
 function buildTree(
   object: DomainObject,
   objectMap: Map<string, DomainObject>,
-  visited: Set<string>,
+  blocked: Set<string>,
 ): DomainObjectNode {
-  visited.add(object.name);
+  blocked.add(object.name);
   const children: DomainObjectNode[] = [];
 
   if (object.properties) {
     for (const prop of object.properties) {
       for (const name of extractTypeNames(prop.type)) {
         const child = objectMap.get(name);
-        if (child && !visited.has(child.name)) {
-          children.push(buildTree(child, objectMap, visited));
+        if (child && !blocked.has(child.name)) {
+          children.push(buildTree(child, objectMap, blocked));
         }
       }
     }
