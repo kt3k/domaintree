@@ -7,6 +7,7 @@
       "description": "Order aggregate",
       "properties": [
         { "name": "id", "type": "OrderId" },
+        { "name": "customer", "type": "Customer" },
         { "name": "items", "type": "OrderItem[]" },
         { "name": "orderedAt", "type": "Date" }
       ]
@@ -39,7 +40,8 @@
     {
       "name": "Customer",
       "kind": "entity",
-      "description": "Customer aggregate",
+      "isAggregateRoot": true,
+      "description": "Customer aggregate (forced root — referenced by Order but kept as its own aggregate)",
       "properties": [
         { "name": "id", "type": "CustomerId" },
         { "name": "name", "type": "PersonName" },

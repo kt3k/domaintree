@@ -30,6 +30,11 @@ export const inputSchema = {
             description:
               "Description (used as aggregate description for root entities)",
           },
+          isAggregateRoot: {
+            type: "boolean",
+            description:
+              "If true, this model is forced to be an aggregate root. Models without this flag still fall back to inference (unreferenced models become roots).",
+          },
           properties: {
             type: "array",
             description: "List of properties",

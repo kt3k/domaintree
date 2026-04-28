@@ -9,6 +9,7 @@ export interface DomainObject {
   kind: "entity" | "value_object";
   description?: string;
   properties?: Property[];
+  isAggregateRoot?: boolean;
 }
 
 /** Internal tree node built from aggregate inference */

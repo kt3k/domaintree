@@ -67,6 +67,28 @@ Deno.test("validate: reports nested property errors with full path", () => {
   assertEquals(errors[0].message, 'missing required property "type"');
 });
 
+Deno.test("validate: accepts isAggregateRoot boolean", () => {
+  const doc = {
+    title: "Test",
+    models: [
+      { name: "Order", kind: "entity", isAggregateRoot: true },
+      { name: "OrderItem", kind: "entity", isAggregateRoot: false },
+    ],
+  };
+  assertEquals(validate(doc), []);
+});
+
+Deno.test("validate: rejects non-boolean isAggregateRoot", () => {
+  const doc = {
+    title: "Test",
+    models: [{ name: "Order", kind: "entity", isAggregateRoot: "yes" }],
+  };
+  const errors = validate(doc);
+  assertEquals(errors.length, 1);
+  assertEquals(errors[0].path, "models[0].isAggregateRoot");
+  assertEquals(errors[0].message, "expected boolean, got string");
+});
+
 Deno.test("validate: accumulates multiple errors", () => {
   const doc = {
     title: 123,

@@ -183,6 +183,79 @@ Deno.test("parse: resolves wrapper notations ([], ?, Array<T>, Set<T>)", () => {
   assertEquals(root.object.properties?.[2].type, "Array<Tag>");
 });
 
+Deno.test("parse: isAggregateRoot forces a referenced model into its own root", () => {
+  const json = JSON.stringify({
+    title: "Test",
+    models: [
+      {
+        name: "Order",
+        kind: "entity",
+        properties: [
+          { name: "id", type: "OrderId" },
+          { name: "item", type: "OrderItem" },
+        ],
+      },
+      {
+        name: "OrderItem",
+        kind: "entity",
+        isAggregateRoot: true,
+        properties: [{ name: "id", type: "OrderItemId" }],
+      },
+      {
+        name: "OrderId",
+        kind: "value_object",
+        properties: [{ name: "value", type: "string" }],
+      },
+      {
+        name: "OrderItemId",
+        kind: "value_object",
+        properties: [{ name: "value", type: "string" }],
+      },
+    ],
+  });
+
+  const doc = parse(json);
+  assertEquals(doc.groups.length, 2);
+
+  const order = doc.groups[0];
+  assertEquals(order.root.object.name, "Order");
+  // OrderItem is excluded from Order's tree because it is a forced root
+  assertEquals(order.root.children.map((c) => c.object.name), ["OrderId"]);
+
+  const orderItem = doc.groups[1];
+  assertEquals(orderItem.root.object.name, "OrderItem");
+  assertEquals(orderItem.kind, "aggregate");
+  assertEquals(orderItem.root.children.map((c) => c.object.name), [
+    "OrderItemId",
+  ]);
+});
+
+Deno.test("parse: isAggregateRoot=false does not force a referenced model into a root", () => {
+  const json = JSON.stringify({
+    title: "Test",
+    models: [
+      {
+        name: "Order",
+        kind: "entity",
+        properties: [{ name: "item", type: "OrderItem" }],
+      },
+      {
+        name: "OrderItem",
+        kind: "entity",
+        isAggregateRoot: false,
+        properties: [{ name: "qty", type: "number" }],
+      },
+    ],
+  });
+
+  const doc = parse(json);
+  assertEquals(doc.groups.length, 1);
+  assertEquals(doc.groups[0].root.object.name, "Order");
+  assertEquals(doc.groups[0].root.children.map((c) => c.object.name), [
+    "OrderItem",
+  ]);
+});
+
 Deno.test("parse: resolves composed wrappers (Array<T>?, Set<T>[])", () => {
   const json = JSON.stringify({
     title: "Test",

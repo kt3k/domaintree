@@ -65,6 +65,10 @@ function parseDomainObject(raw: unknown, path: string): DomainObject {
     domainObject.description = obj.description;
   }
 
+  if (typeof obj.isAggregateRoot === "boolean") {
+    domainObject.isAggregateRoot = obj.isAggregateRoot;
+  }
+
   if (Array.isArray(obj.properties)) {
     domainObject.properties = obj.properties.map((p: unknown, i: number) =>
       parseProperty(p, `${path}.properties[${i}]`)
@@ -115,8 +119,12 @@ function extractTypeName(type: string): string {
  * Infer aggregate boundaries from flat domain object list.
  *
  * 1. Build a reference graph: property types that match domain object names.
- * 2. Find roots: domain objects not referenced by any other.
+ * 2. Find roots: domain objects with an explicit `isAggregateRoot` flag, plus
+ *    any domain objects not referenced by another.
  * 3. Roots with children → aggregate, roots without → standalone.
+ *
+ * Explicit roots are excluded from being children of other trees, even if
+ * they are referenced.
  */
 function inferGroups(objects: DomainObject[]): DisplayGroup[] {
   const objectMap = new Map<string, DomainObject>();
@@ -137,11 +145,20 @@ function inferGroups(objects: DomainObject[]): DisplayGroup[] {
     }
   }
 
-  // Root domain objects: not referenced by any other
-  const roots = objects.filter((o) => !referenced.has(o.name));
+  const explicitRoots = new Set<string>(
+    objects.filter((o) => o.isAggregateRoot).map((o) => o.name),
+  );
+
+  // Roots: explicitly flagged OR not referenced by any other
+  const roots = objects.filter(
+    (o) => explicitRoots.has(o.name) || !referenced.has(o.name),
+  );
 
   return roots.map((root) => {
-    const node = buildTree(root, objectMap, new Set());
+    // Block other explicit roots from being absorbed as children of this tree.
+    const blocked = new Set<string>(explicitRoots);
+    blocked.delete(root.name);
+    const node = buildTree(root, objectMap, blocked);
     const hasChildren = node.children.length > 0;
     return {
       kind: hasChildren ? "aggregate" : "standalone",
