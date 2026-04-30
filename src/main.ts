@@ -75,15 +75,26 @@ const validateCommand = defineCommand({
   run({ args }) {
     const result = validateAction(readFile, args);
     if (result.ok) {
+      for (const w of result.warnings) {
+        console.error(`warning: ${w.path}: ${w.message}`);
+      }
       console.log(`OK: ${args.input}`);
       return;
     }
 
     if (result.kind === "schema") {
-      for (const err of result.errors) {
-        console.error(`${err.path}: ${err.message}`);
+      for (const issue of result.errors) {
+        const prefix = issue.severity === "warning" ? "warning: " : "";
+        console.error(`${prefix}${issue.path}: ${issue.message}`);
       }
-      console.error(`\n${result.errors.length} error(s)`);
+      const errCount = result.errors.filter((i) =>
+        i.severity === "error"
+      ).length;
+      const warnCount = result.errors.length - errCount;
+      const summary = warnCount > 0
+        ? `${errCount} error(s), ${warnCount} warning(s)`
+        : `${errCount} error(s)`;
+      console.error(`\n${summary}`);
     } else {
       console.error(result.error);
     }

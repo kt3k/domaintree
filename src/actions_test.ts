@@ -53,6 +53,27 @@ Deno.test("buildAction: applies title override", () => {
 Deno.test("validateAction: returns ok for valid input", () => {
   const result = validateAction(() => validJson(), { input: "x.json" });
   assertEquals(result.ok, true);
+  if (result.ok) assertEquals(result.warnings, []);
+});
+
+Deno.test("validateAction: returns ok with warnings for unrecognized model references", () => {
+  const json = JSON.stringify({
+    title: "Test",
+    models: [
+      {
+        name: "Order",
+        kind: "entity",
+        properties: [{ name: "lookup", type: "Map<string, Item>" }],
+      },
+      { name: "Item", kind: "entity" },
+    ],
+  });
+  const result = validateAction(() => json, { input: "x.json" });
+  assertEquals(result.ok, true);
+  if (result.ok) {
+    assertEquals(result.warnings.length, 1);
+    assertEquals(result.warnings[0].severity, "warning");
+  }
 });
 
 Deno.test("validateAction: returns io error when file cannot be read", () => {

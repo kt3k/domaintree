@@ -111,7 +111,7 @@ function parseProperty(raw: unknown, path: string): Property {
  * `Array<A | B>`). The original type string is preserved on the property
  * for display.
  */
-function extractTypeNames(type: string): string[] {
+export function extractTypeNames(type: string): string[] {
   const t = type.trim();
   if (t === "") return [];
 

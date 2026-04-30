@@ -29,7 +29,7 @@ export function buildAction(
 }
 
 export type ValidateResult =
-  | { ok: true }
+  | { ok: true; warnings: ValidationError[] }
   | { ok: false; kind: "io"; error: string }
   | { ok: false; kind: "schema"; errors: ValidationError[] };
 
@@ -59,7 +59,8 @@ export function validateAction(
     };
   }
 
-  const errors = validate(data);
-  if (errors.length === 0) return { ok: true };
-  return { ok: false, kind: "schema", errors };
+  const issues = validate(data);
+  const hasError = issues.some((i) => i.severity === "error");
+  if (!hasError) return { ok: true, warnings: issues };
+  return { ok: false, kind: "schema", errors: issues };
 }

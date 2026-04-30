@@ -99,3 +99,75 @@ Deno.test("validate: accumulates multiple errors", () => {
   const errors = validate(doc);
   assertEquals(errors.length, 2);
 });
+
+Deno.test("validate: warns when type contains a known model in an unsupported wrapper", () => {
+  const doc = {
+    title: "Test",
+    models: [
+      {
+        name: "Order",
+        kind: "entity",
+        properties: [{ name: "lookup", type: "Map<string, OrderItem>" }],
+      },
+      { name: "OrderItem", kind: "entity" },
+    ],
+  };
+  const issues = validate(doc);
+  assertEquals(issues.length, 1);
+  assertEquals(issues[0].severity, "warning");
+  assertEquals(issues[0].path, "models[0].properties[0].type");
+  assertStringIncludes(issues[0].message, "OrderItem");
+});
+
+Deno.test("validate: does not warn for supported wrappers", () => {
+  const doc = {
+    title: "Test",
+    models: [
+      {
+        name: "Order",
+        kind: "entity",
+        properties: [
+          { name: "items", type: "OrderItem[]" },
+          { name: "primary", type: "OrderItem?" },
+          { name: "set", type: "Set<OrderItem>" },
+          { name: "wrapped", type: "Array<OrderItem | Order>" },
+        ],
+      },
+      { name: "OrderItem", kind: "entity" },
+    ],
+  };
+  assertEquals(validate(doc), []);
+});
+
+Deno.test("validate: does not warn when type only contains primitive names", () => {
+  const doc = {
+    title: "Test",
+    models: [
+      {
+        name: "Order",
+        kind: "entity",
+        properties: [{ name: "memo", type: "string" }],
+      },
+    ],
+  };
+  assertEquals(validate(doc), []);
+});
+
+Deno.test("validate: does not match model names as substrings of unrelated tokens", () => {
+  const doc = {
+    title: "Test",
+    models: [
+      {
+        name: "Order",
+        kind: "entity",
+        properties: [{ name: "memo", type: "PreorderTag" }],
+      },
+    ],
+  };
+  assertEquals(validate(doc), []);
+});
+
+Deno.test('validate: errors carry severity "error"', () => {
+  const errors = validate({ models: [] });
+  assertEquals(errors[0].severity, "error");
+});
