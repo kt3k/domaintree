@@ -9,6 +9,11 @@ const KINDS = ["entity", "value_object"] as const;
 
 const WRAPPER_RE = /^(?:Array|Set)<(.+)>$/;
 
+function isKind(value: unknown): value is DomainObject["kind"] {
+  return typeof value === "string" &&
+    (KINDS as readonly string[]).includes(value);
+}
+
 function requireNonEmptyString(
   value: unknown,
   path: string,
@@ -60,10 +65,7 @@ function parseDomainObject(raw: unknown, path: string): DomainObject {
   const obj = raw as Record<string, unknown>;
   const name = requireNonEmptyString(obj.name, path, "name");
 
-  if (
-    typeof obj.kind !== "string" ||
-    !(KINDS as readonly string[]).includes(obj.kind)
-  ) {
+  if (!isKind(obj.kind)) {
     throw new Error(
       `${path} (${name}): "kind" must be one of: ${KINDS.join(", ")}`,
     );
@@ -71,7 +73,7 @@ function parseDomainObject(raw: unknown, path: string): DomainObject {
 
   const domainObject: DomainObject = {
     name,
-    kind: obj.kind as DomainObject["kind"],
+    kind: obj.kind,
   };
 
   if (typeof obj.description === "string") {
