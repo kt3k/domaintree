@@ -5,7 +5,7 @@ import type { DomainDocument } from "./types.ts";
 function makeDoc(): DomainDocument {
   return {
     title: "Test Domain",
-    groups: [
+    roots: [
       {
         object: {
           name: "Order",
@@ -115,7 +115,7 @@ Deno.test("render: includes dark mode CSS", () => {
 Deno.test("render: standalone object (no aggregate wrapper)", () => {
   const doc: DomainDocument = {
     title: "Test",
-    groups: [
+    roots: [
       {
         object: {
           name: "Config",

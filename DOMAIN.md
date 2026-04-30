@@ -35,7 +35,7 @@ Host Service** 的に固定 HTML 構造を提供。
 | Standalone (推論) | 子参照を持たないルート。アグリゲート枠なしで描画。                                               | `DisplayGroup.kind === "standalone"`                                       |
 | DomainObjectNode  | 推論ツリーのノード。1 つの DomainObject と子ノード列を保持する内部表現。                         | `src/types.ts` (`DomainObjectNode`)                                        |
 | DisplayGroup      | 描画単位 (アグリゲート or Standalone) のラッパ。                                                 | `src/types.ts` (`DisplayGroup`)                                            |
-| Reference (暗黙)  | プロパティの `type` が別 DomainObject の `name` と一致したときに成立する親→子関係。              | `inferGroups` (`src/parser.ts`)                                            |
+| Reference (暗黙)  | プロパティの `type` が別 DomainObject の `name` と一致したときに成立する親→子関係。              | `inferAggregateRoots` (`src/parser.ts`)                                    |
 | ValidationError   | スキーマ検証で見つかった不整合 (path + message)。                                                | `src/validator.ts` (`ValidationError`)                                     |
 
 ## Aggregates
@@ -49,7 +49,7 @@ Host Service** 的に固定 HTML 構造を提供。
   の中枢データ。
 - **Invariants**:
   - `title` は非空文字列。
-  - `groups` の各要素は `aggregate` または `standalone` のいずれか。
+  - `roots` の各要素は `aggregate` または `standalone` のいずれか。
   - `aggregate` ならば `root.children.length > 0`、`standalone` ならば
     `root.children.length === 0`。
   - 同一 `DomainObject` は推論ツリー内で 2 度展開されない (循環防止 —
@@ -79,7 +79,8 @@ Host Service** 的に固定 HTML 構造を提供。
 
 - **Aggregate Root** は型レベルで一級表現を持たない (`DisplayGroup.kind`
   から推測)。
-- **Reference Graph** の概念に固有の名前がない (`inferGroups` 内に埋め込み)。
+- **Reference Graph** の概念に固有の名前がない (`inferAggregateRoots`
+  内に埋め込み)。
 - **Bounded Context** / **Domain Service** / **Domain Event** / **Repository** /
   **Factory** / **Invariant** はユーザー入力の表現範囲外 (現状 `kind` は Entity
   / Value Object のみ)。

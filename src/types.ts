@@ -20,5 +20,5 @@ export interface DomainObjectNode {
 
 export interface DomainDocument {
   title: string;
-  groups: DomainObjectNode[];
+  roots: DomainObjectNode[];
 }

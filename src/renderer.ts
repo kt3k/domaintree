@@ -34,11 +34,11 @@ export function render(doc: DomainDocument): string {
   html += `<h1>${escapeHtml(doc.title)}</h1>\n`;
   html += `<div class="subtitle">${subtitle}</div>\n\n`;
 
-  for (const group of doc.groups) {
-    if (group.children.length > 0) {
-      html += renderAggregate(group);
+  for (const root of doc.roots) {
+    if (root.children.length > 0) {
+      html += renderAggregate(root);
     } else {
-      html += renderStandalone(group);
+      html += renderStandalone(root);
     }
   }
 
@@ -127,9 +127,9 @@ interface Stats {
 
 function collectStats(doc: DomainDocument): Stats {
   const stats: Stats = { aggregates: 0, entities: 0, valueObjects: 0 };
-  for (const group of doc.groups) {
-    if (group.children.length > 0) stats.aggregates++;
-    countObjects(group, stats);
+  for (const root of doc.roots) {
+    if (root.children.length > 0) stats.aggregates++;
+    countObjects(root, stats);
   }
   return stats;
 }
