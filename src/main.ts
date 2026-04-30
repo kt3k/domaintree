@@ -1,21 +1,12 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { exit } from "node:process";
 import { defineCommand, runMain } from "citty";
-import { parse } from "./parser.ts";
-import { render } from "./renderer.ts";
+import { buildAction, validateAction } from "./actions.ts";
 import { inputSchema } from "./schema.ts";
-import { validate } from "./validator.ts";
 
 const VERSION = "0.1.0";
 
-function readFileOrExit(path: string): string {
-  try {
-    return readFileSync(path, "utf-8");
-  } catch {
-    console.error(`Error: Cannot read file: ${path}`);
-    exit(1);
-  }
-}
+const readFile = (path: string) => readFileSync(path, "utf-8");
 
 const buildCommand = defineCommand({
   meta: {
@@ -39,32 +30,22 @@ const buildCommand = defineCommand({
     },
   },
   run({ args }) {
-    const jsonContent = readFileOrExit(args.input);
-
-    let doc;
-    try {
-      doc = parse(jsonContent);
-    } catch (e) {
-      console.error(`Error: ${(e as Error).message}`);
+    const result = buildAction(readFile, args);
+    if (!result.ok) {
+      console.error(result.error);
       exit(1);
     }
 
-    if (args.title) {
-      doc.title = args.title;
-    }
-
-    const html = render(doc);
-
     if (args.output) {
       try {
-        writeFileSync(args.output, html);
+        writeFileSync(args.output, result.html);
         console.error(`Written to ${args.output}`);
       } catch {
-        console.error(`Error: Cannot write to: ${args.output}`);
+        console.error(`Cannot write to: ${args.output}`);
         exit(1);
       }
     } else {
-      console.log(html);
+      console.log(result.html);
     }
   },
 });
@@ -92,26 +73,20 @@ const validateCommand = defineCommand({
     },
   },
   run({ args }) {
-    const jsonContent = readFileOrExit(args.input);
-
-    let data: unknown;
-    try {
-      data = JSON.parse(jsonContent);
-    } catch (e) {
-      console.error(`Invalid JSON: ${(e as Error).message}`);
-      exit(1);
-    }
-
-    const errors = validate(data);
-    if (errors.length === 0) {
+    const result = validateAction(readFile, args);
+    if (result.ok) {
       console.log(`OK: ${args.input}`);
       return;
     }
 
-    for (const err of errors) {
-      console.error(`${err.path}: ${err.message}`);
+    if (result.kind === "schema") {
+      for (const err of result.errors) {
+        console.error(`${err.path}: ${err.message}`);
+      }
+      console.error(`\n${result.errors.length} error(s)`);
+    } else {
+      console.error(result.error);
     }
-    console.error(`\n${errors.length} error(s)`);
     exit(1);
   },
 });
