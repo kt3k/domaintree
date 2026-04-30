@@ -52,9 +52,9 @@ export function parse(jsonString: string): DomainDocument {
     parseDomainObject(m, `models[${i}]`)
   );
 
-  const groups = inferGroups(objects);
+  const roots = inferAggregateRoots(objects);
 
-  return { title: doc.title, groups };
+  return { title: doc.title, roots };
 }
 
 function parseDomainObject(raw: unknown, path: string): DomainObject {
@@ -162,7 +162,7 @@ function splitTopLevelUnion(s: string): string[] {
  * 3. A root with children renders as an aggregate; without children, as a
  *    standalone object.
  */
-function inferGroups(objects: DomainObject[]): DomainObjectNode[] {
+function inferAggregateRoots(objects: DomainObject[]): DomainObjectNode[] {
   const objectMap = new Map<string, DomainObject>();
   const explicitRoots = new Set<string>();
   for (const obj of objects) {
