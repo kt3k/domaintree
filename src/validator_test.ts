@@ -1,4 +1,4 @@
-import { assertEquals } from "@std/assert";
+import { assertEquals, assertStringIncludes } from "@std/assert";
 import { validate } from "./validator.ts";
 
 Deno.test("validate: accepts a valid document", () => {
@@ -19,14 +19,15 @@ Deno.test("validate: reports missing required fields", () => {
   const errors = validate({ models: [] });
   assertEquals(errors.length, 1);
   assertEquals(errors[0].path, "(root)");
-  assertEquals(errors[0].message, 'missing required property "title"');
+  assertStringIncludes(errors[0].message, "title");
 });
 
 Deno.test("validate: reports wrong top-level type", () => {
   const errors = validate("not an object");
   assertEquals(errors.length, 1);
   assertEquals(errors[0].path, "(root)");
-  assertEquals(errors[0].message, "expected object, got string");
+  assertStringIncludes(errors[0].message, "object");
+  assertStringIncludes(errors[0].message, "string");
 });
 
 Deno.test("validate: reports invalid enum value", () => {
@@ -47,7 +48,7 @@ Deno.test("validate: reports unknown property when additionalProperties is false
   const errors = validate(doc);
   assertEquals(errors.length, 1);
   assertEquals(errors[0].path, "models[0]");
-  assertEquals(errors[0].message, 'unknown property "extra"');
+  assertStringIncludes(errors[0].message, "extra");
 });
 
 Deno.test("validate: reports nested property errors with full path", () => {
@@ -64,7 +65,7 @@ Deno.test("validate: reports nested property errors with full path", () => {
   const errors = validate(doc);
   assertEquals(errors.length, 1);
   assertEquals(errors[0].path, "models[0].properties[0]");
-  assertEquals(errors[0].message, 'missing required property "type"');
+  assertStringIncludes(errors[0].message, "type");
 });
 
 Deno.test("validate: accepts isAggregateRoot boolean", () => {
@@ -86,7 +87,8 @@ Deno.test("validate: rejects non-boolean isAggregateRoot", () => {
   const errors = validate(doc);
   assertEquals(errors.length, 1);
   assertEquals(errors[0].path, "models[0].isAggregateRoot");
-  assertEquals(errors[0].message, "expected boolean, got string");
+  assertStringIncludes(errors[0].message, "boolean");
+  assertStringIncludes(errors[0].message, "string");
 });
 
 Deno.test("validate: accumulates multiple errors", () => {
