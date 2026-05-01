@@ -206,6 +206,23 @@ const CSS = `  :root {${LIGHT_VARS}
     background: transparent;
   }
 
+  .card.reference {
+    background: transparent;
+    border: 1px dashed var(--border-strong);
+    box-shadow: none;
+  }
+  .card.reference .card-header {
+    background: transparent;
+    color: var(--text-sub);
+  }
+  .card.reference .ref-arrow {
+    color: var(--text-sub);
+    font-weight: 600;
+  }
+  .card.reference .badge {
+    background: transparent;
+  }
+
   .theme-toggle {
     position: fixed;
     top: 20px;

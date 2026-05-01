@@ -185,10 +185,13 @@ function inferAggregateRoots(objects: DomainObject[]): DomainObjectNode[] {
   );
 
   return roots.map((root) => {
-    // Block other explicit roots from being absorbed as children of this tree.
-    const blocked = new Set<string>(explicitRoots);
-    blocked.delete(root.name);
-    return buildTree(root, objectMap, blocked);
+    // Block other explicit roots from being absorbed as children of this
+    // tree, but surface them as external reference nodes so the
+    // cross-aggregate link is visible.
+    const externalRoots = new Set<string>(explicitRoots);
+    externalRoots.delete(root.name);
+    const blocked = new Set<string>(externalRoots);
+    return buildTree(root, objectMap, blocked, externalRoots);
   });
 }
 
@@ -196,20 +199,32 @@ function buildTree(
   object: DomainObject,
   objectMap: Map<string, DomainObject>,
   blocked: Set<string>,
+  externalRoots: Set<string>,
 ): DomainObjectNode {
   blocked.add(object.name);
   const children: DomainObjectNode[] = [];
+  const references: DomainObjectNode[] = [];
+  const seenRefs = new Set<string>();
 
   if (object.properties) {
     for (const prop of object.properties) {
       for (const name of extractTypeNames(prop.type)) {
         const child = objectMap.get(name);
-        if (child && !blocked.has(child.name)) {
-          children.push(buildTree(child, objectMap, blocked));
+        if (!child) continue;
+        if (externalRoots.has(name)) {
+          if (seenRefs.has(name)) continue;
+          seenRefs.add(name);
+          references.push({
+            object: child,
+            children: [],
+            isExternalReference: true,
+          });
+        } else if (!blocked.has(child.name)) {
+          children.push(buildTree(child, objectMap, blocked, externalRoots));
         }
       }
     }
   }
 
-  return { object, children };
+  return { object, children: [...children, ...references] };
 }

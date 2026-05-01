@@ -16,6 +16,13 @@ export interface DomainObject {
 export interface DomainObjectNode {
   object: DomainObject;
   children: DomainObjectNode[];
+  /**
+   * True when this node represents a reference to an aggregate root that
+   * lives in a different aggregate. The node is rendered as a leaf with no
+   * properties, indicating the cross-aggregate link without re-displaying
+   * the target's body.
+   */
+  isExternalReference?: boolean;
 }
 
 export interface DomainDocument {

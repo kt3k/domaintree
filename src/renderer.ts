@@ -78,7 +78,9 @@ function renderStandalone(node: DomainObjectNode): string {
 function renderTreeNode(node: DomainObjectNode, indent: number): string {
   const pad = "  ".repeat(indent);
   let html = `${pad}<li class="tree-node">\n`;
-  html += renderCard(node.object, indent + 1);
+  html += node.isExternalReference
+    ? renderReferenceCard(node.object, indent + 1)
+    : renderCard(node.object, indent + 1);
 
   if (node.children.length > 0) {
     html += `${pad}  <ul class="tree">\n`;
@@ -119,6 +121,18 @@ function renderCard(object: DomainObject, indent: number): string {
   return html;
 }
 
+function renderReferenceCard(object: DomainObject, indent: number): string {
+  const pad = "  ".repeat(indent);
+  let html = `${pad}<div class="card reference">\n`;
+  html += `${pad}  <div class="card-header">\n`;
+  html += `${pad}    <span class="ref-arrow">&rarr;</span>\n`;
+  html += `${pad}    <span>${escapeHtml(object.name)}</span>\n`;
+  html += `${pad}    <span class="badge">Aggregate Root</span>\n`;
+  html += `${pad}  </div>\n`;
+  html += `${pad}</div>\n`;
+  return html;
+}
+
 interface Stats {
   aggregates: number;
   entities: number;
@@ -135,6 +149,7 @@ function collectStats(doc: DomainDocument): Stats {
 }
 
 function countObjects(node: DomainObjectNode, stats: Stats): void {
+  if (node.isExternalReference) return;
   switch (node.object.kind) {
     case "entity":
       stats.entities++;
