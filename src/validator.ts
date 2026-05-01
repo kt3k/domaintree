@@ -20,6 +20,7 @@ export function validate(data: unknown): ValidationError[] {
   const errors: ValidationError[] = [];
   validateNode(data, inputSchema as SchemaNode, "", errors);
   lintModelReferences(data, errors);
+  checkUnreachableModels(data, errors);
   return errors;
 }
 
@@ -148,4 +149,83 @@ function lintModelReferences(
 function containsAsToken(haystack: string, name: string): boolean {
   const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   return new RegExp(`\\b${escaped}\\b`).test(haystack);
+}
+
+/**
+ * Emit an error for models that cannot be reached from any aggregate root.
+ * This happens when a set of models reference each other in a cycle and none
+ * of them is marked `isAggregateRoot: true`: each is "referenced" so none is
+ * inferred as a root, and the whole cycle is silently dropped from the
+ * rendered output.
+ */
+function checkUnreachableModels(
+  data: unknown,
+  errors: ValidationError[],
+): void {
+  if (!data || typeof data !== "object") return;
+  const models = (data as Record<string, unknown>).models;
+  if (!Array.isArray(models) || models.length === 0) return;
+
+  const names: string[] = [];
+  const explicitRoots = new Set<string>();
+  const indexByName = new Map<string, number>();
+  for (let i = 0; i < models.length; i++) {
+    const m = models[i];
+    if (!m || typeof m !== "object") return;
+    const obj = m as Record<string, unknown>;
+    const name = obj.name;
+    if (typeof name !== "string" || name.trim() === "") return;
+    if (indexByName.has(name)) return;
+    names.push(name);
+    indexByName.set(name, i);
+    if (obj.isAggregateRoot === true) explicitRoots.add(name);
+  }
+  const nameSet = new Set(names);
+
+  const edges = new Map<string, Set<string>>();
+  const referenced = new Set<string>();
+  for (const m of models) {
+    const obj = m as Record<string, unknown>;
+    const from = obj.name as string;
+    const out = new Set<string>();
+    edges.set(from, out);
+    const props = obj.properties;
+    if (!Array.isArray(props)) continue;
+    for (const prop of props) {
+      if (!prop || typeof prop !== "object") continue;
+      const type = (prop as Record<string, unknown>).type;
+      if (typeof type !== "string") continue;
+      for (const target of extractTypeNames(type)) {
+        if (nameSet.has(target)) {
+          out.add(target);
+          referenced.add(target);
+        }
+      }
+    }
+  }
+
+  const roots = names.filter((n) => explicitRoots.has(n) || !referenced.has(n));
+  const reachable = new Set<string>();
+  const stack = [...roots];
+  while (stack.length > 0) {
+    const cur = stack.pop()!;
+    if (reachable.has(cur)) continue;
+    reachable.add(cur);
+    const out = edges.get(cur);
+    if (!out) continue;
+    for (const next of out) {
+      if (!reachable.has(next)) stack.push(next);
+    }
+  }
+
+  for (const name of names) {
+    if (reachable.has(name)) continue;
+    errors.push({
+      path: `models[${indexByName.get(name)}]`,
+      message: `model "${name}" is unreachable; it is part of a reference ` +
+        `cycle with no aggregate root. Add isAggregateRoot: true to one ` +
+        `of the models in the cycle.`,
+      severity: "error",
+    });
+  }
 }

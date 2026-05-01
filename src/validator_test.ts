@@ -126,6 +126,7 @@ Deno.test("validate: does not warn for supported wrappers", () => {
       {
         name: "Order",
         kind: "entity",
+        isAggregateRoot: true,
         properties: [
           { name: "items", type: "OrderItem[]" },
           { name: "primary", type: "OrderItem?" },
@@ -170,4 +171,109 @@ Deno.test("validate: does not match model names as substrings of unrelated token
 Deno.test('validate: errors carry severity "error"', () => {
   const errors = validate({ models: [] });
   assertEquals(errors[0].severity, "error");
+});
+
+Deno.test("validate: errors on a 2-cycle with no aggregate root", () => {
+  const doc = {
+    title: "Test",
+    models: [
+      {
+        name: "A",
+        kind: "entity",
+        properties: [{ name: "b", type: "B" }],
+      },
+      {
+        name: "B",
+        kind: "entity",
+        properties: [{ name: "a", type: "A" }],
+      },
+    ],
+  };
+  const errors = validate(doc);
+  assertEquals(errors.length, 2);
+  assertEquals(errors[0].severity, "error");
+  assertEquals(errors[0].path, "models[0]");
+  assertStringIncludes(errors[0].message, "unreachable");
+  assertStringIncludes(errors[0].message, "A");
+  assertEquals(errors[1].path, "models[1]");
+  assertStringIncludes(errors[1].message, "B");
+});
+
+Deno.test("validate: cycle is OK when one member is an explicit aggregate root", () => {
+  const doc = {
+    title: "Test",
+    models: [
+      {
+        name: "A",
+        kind: "entity",
+        isAggregateRoot: true,
+        properties: [{ name: "b", type: "B" }],
+      },
+      {
+        name: "B",
+        kind: "entity",
+        properties: [{ name: "a", type: "A" }],
+      },
+    ],
+  };
+  assertEquals(validate(doc), []);
+});
+
+Deno.test("validate: errors only on the cycle members, not on reachable models", () => {
+  const doc = {
+    title: "Test",
+    models: [
+      {
+        name: "Root",
+        kind: "entity",
+        properties: [{ name: "child", type: "Child" }],
+      },
+      { name: "Child", kind: "entity" },
+      {
+        name: "A",
+        kind: "entity",
+        properties: [{ name: "b", type: "B" }],
+      },
+      {
+        name: "B",
+        kind: "entity",
+        properties: [{ name: "a", type: "A" }],
+      },
+    ],
+  };
+  const errors = validate(doc);
+  assertEquals(errors.length, 2);
+  assertEquals(errors.map((e) => e.path), ["models[2]", "models[3]"]);
+});
+
+Deno.test("validate: self-reference without explicit root is unreachable", () => {
+  const doc = {
+    title: "Test",
+    models: [
+      {
+        name: "Node",
+        kind: "entity",
+        properties: [{ name: "parent", type: "Node?" }],
+      },
+    ],
+  };
+  const errors = validate(doc);
+  assertEquals(errors.length, 1);
+  assertEquals(errors[0].severity, "error");
+  assertStringIncludes(errors[0].message, "Node");
+});
+
+Deno.test("validate: self-reference with explicit root is OK", () => {
+  const doc = {
+    title: "Test",
+    models: [
+      {
+        name: "Node",
+        kind: "entity",
+        isAggregateRoot: true,
+        properties: [{ name: "parent", type: "Node?" }],
+      },
+    ],
+  };
+  assertEquals(validate(doc), []);
 });
