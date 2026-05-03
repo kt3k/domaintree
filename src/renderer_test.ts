@@ -131,3 +131,66 @@ Deno.test("render: standalone object (no aggregate wrapper)", () => {
   assertStringIncludes(html, "standalone");
   assertFalse(html.includes('class="aggregate-header"'));
 });
+
+function makeDocWithReference(): DomainDocument {
+  return {
+    title: "Test",
+    roots: [
+      {
+        object: {
+          name: "Order",
+          kind: "entity",
+          properties: [{ name: "customer", type: "Customer" }],
+        },
+        children: [
+          {
+            object: {
+              name: "Customer",
+              kind: "entity",
+              properties: [{ name: "id", type: "string" }],
+            },
+            children: [],
+            isExternalReference: true,
+          },
+        ],
+      },
+      {
+        object: {
+          name: "Customer",
+          kind: "entity",
+          properties: [{ name: "id", type: "string" }],
+        },
+        children: [],
+      },
+    ],
+  };
+}
+
+Deno.test("render: renders external reference node with reference styling", () => {
+  const html = render(makeDocWithReference());
+  assertStringIncludes(html, 'class="card reference"');
+  assertStringIncludes(html, "Aggregate Root");
+  assertStringIncludes(html, "&rarr;");
+});
+
+Deno.test("render: external reference does not render the target's properties", () => {
+  const html = render(makeDocWithReference());
+  // The Customer reference under Order must not include `id:` from inside
+  // Order's tree. The standalone Customer card still renders it.
+  const orderTreeStart = html.indexOf("Order");
+  const customerStandalone = html.lastIndexOf("Customer");
+  // Reference card is between Order block start and standalone Customer.
+  const referenceBlock = html.slice(
+    orderTreeStart,
+    html.indexOf("</div>\n\n", orderTreeStart) + 1,
+  );
+  assertFalse(referenceBlock.includes("id:"));
+  assertStringIncludes(html.slice(customerStandalone), "id:");
+});
+
+Deno.test("render: external reference is not counted in stats", () => {
+  const html = render(makeDocWithReference());
+  // 1 standalone Customer + 1 Order = 2 entities. The reference must not
+  // bump the count to 3.
+  assertStringIncludes(html, "2 Entities");
+});

@@ -278,13 +278,71 @@ Deno.test("parse: isAggregateRoot forces a referenced model into its own root", 
 
   const order = doc.roots[0];
   assertEquals(order.object.name, "Order");
-  // OrderItem is excluded from Order's tree because it is a forced root
-  assertEquals(order.children.map((c) => c.object.name), ["OrderId"]);
+  // OrderItem appears as an external reference node, after normal children.
+  assertEquals(order.children.map((c) => c.object.name), [
+    "OrderId",
+    "OrderItem",
+  ]);
+  assertEquals(order.children[0].isExternalReference, undefined);
+  assertEquals(order.children[1].isExternalReference, true);
+  assertEquals(order.children[1].children, []);
 
   const orderItem = doc.roots[1];
   assertEquals(orderItem.object.name, "OrderItem");
   assertEquals(orderItem.children.map((c) => c.object.name), [
     "OrderItemId",
+  ]);
+});
+
+Deno.test("parse: dedupes external reference nodes per parent", () => {
+  const json = JSON.stringify({
+    title: "Test",
+    models: [
+      {
+        name: "Order",
+        kind: "entity",
+        properties: [
+          { name: "shipper", type: "Customer" },
+          { name: "billing", type: "Customer" },
+        ],
+      },
+      {
+        name: "Customer",
+        kind: "entity",
+        isAggregateRoot: true,
+      },
+    ],
+  });
+
+  const doc = parse(json);
+  const order = doc.roots[0];
+  assertEquals(order.children.length, 1);
+  assertEquals(order.children[0].object.name, "Customer");
+  assertEquals(order.children[0].isExternalReference, true);
+});
+
+Deno.test("parse: external references appear after normal children", () => {
+  const json = JSON.stringify({
+    title: "Test",
+    models: [
+      {
+        name: "Order",
+        kind: "entity",
+        properties: [
+          { name: "customer", type: "Customer" },
+          { name: "id", type: "OrderId" },
+        ],
+      },
+      { name: "Customer", kind: "entity", isAggregateRoot: true },
+      { name: "OrderId", kind: "value_object" },
+    ],
+  });
+
+  const doc = parse(json);
+  const order = doc.roots[0];
+  assertEquals(order.children.map((c) => c.object.name), [
+    "OrderId",
+    "Customer",
   ]);
 });
 
