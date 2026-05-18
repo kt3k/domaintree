@@ -1,0 +1,12 @@
+{
+  "name": "domainchart",
+  "version": "1.0.3",
+  "description": "Visualize DDD domain models as self-contained HTML using the domainchart CLI",
+  "author": {
+    "name": "Yoshiya Hinosawa"
+  },
+  "homepage": "https://github.com/kt3k/domainchart",
+  "repository": "https://github.com/kt3k/domainchart",
+  "license": "MIT",
+  "keywords": ["ddd", "domain-driven-design", "visualization", "diagram"]
+}

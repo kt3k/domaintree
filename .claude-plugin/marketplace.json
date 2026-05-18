@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "domainchart",
+  "description": "domainchart plugin marketplace",
+  "owner": {
+    "name": "Yoshiya Hinosawa"
+  },
+  "plugins": [
+    {
+      "name": "domainchart",
+      "description": "Visualize DDD domain models as self-contained HTML using the domainchart CLI",
+      "source": ".",
+      "category": "development",
+      "homepage": "https://github.com/kt3k/domainchart"
+    }
+  ]
+}
